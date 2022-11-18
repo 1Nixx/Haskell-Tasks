@@ -1,129 +1,134 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use foldr" #-}
+{-# OPTIONS_GHC -Wno-dodgy-imports #-}
 module Lib
-    ( mapFunc,
-      forFunc,
-      whileFunc,
-      untilFunc,
-      filterFunc,
-      allFunc,
-      anyFunc,
-      reduceFunc,
-      sumFunc,
-      countFunc,
-      concatFunc,
-      reverseFunc,
-      takeFunc,
-      skipFunc,
-      addFunc,
-      insertFunc,
-      removeAtFunc,
-      removeFunc
+    ( module Prelude,
+      map,
+      for,
+      while,
+      until,
+      filter,
+      all,
+      any,
+      reduce,
+      sum,
+      count,
+      concat,
+      reverse,
+      take,
+      skip,
+      add,
+      insert,
+      remove,
+      removeAt     
     ) where
 
-mapFunc :: (a -> b) -> [a] -> [b]
-mapFunc f (x:xs) = f x : mapFunc f xs
-mapFunc _ [] = []
+import Prelude hiding 
+  (map, until, filter, all, any, sum, concat, reverse, take, skip)
 
-forFunc :: [a] -> (a -> b) -> [b]
-forFunc (x:xs) f = f x : forFunc xs f 
-forFunc [] _ = []
+map :: (a -> b) -> [a] -> [b]
+map f (x:xs) = f x : map f xs
+map _ [] = []
 
-whileFunc :: (a -> Bool) -> (a -> b) -> [a] -> [b]
-whileFunc cond f (x:xs)
-  | cond x    = f x : whileFunc cond f xs
+for :: [a] -> (a -> b) -> [b]
+for (x:xs) f = f x : for xs f 
+for [] _ = []
+
+while :: (a -> Bool) -> (a -> b) -> [a] -> [b]
+while cond f (x:xs)
+  | cond x    = f x : while cond f xs
   | otherwise = []
-whileFunc _ _ [] = []
+while _ _ [] = []
 
-untilFunc :: (a -> Bool) -> (a -> b) -> [a] -> [b]
-untilFunc cond f (x:xs) 
-  | cond x = f x : untilFunc cond f xs
+until :: (a -> Bool) -> (a -> b) -> [a] -> [b]
+until cond f (x:xs) 
+  | cond x = f x : until cond f xs
   | otherwise = [f x]
-untilFunc _ _ [] = []
+until _ _ [] = []
 
-filterFunc :: (a -> Bool) -> [a] -> [a]
-filterFunc p (x:xs)
-  | p x       = x : filterFunc p xs
-  | otherwise = filterFunc p xs
-filterFunc _ [] = []
+filter :: (a -> Bool) -> [a] -> [a]
+filter p (x:xs)
+  | p x       = x : filter p xs
+  | otherwise = filter p xs
+filter _ [] = []
 
-allFunc :: (a -> Bool) -> [a] -> Bool
-allFunc f (x:xs)
-  | f x       = allFunc f xs
+all :: (a -> Bool) -> [a] -> Bool
+all f (x:xs)
+  | f x       = all f xs
   | otherwise = False
-allFunc _ [] = True
+all _ [] = True
 
-anyFunc :: (a -> Bool) -> [a] -> Bool
-anyFunc f (x:xs)
+any :: (a -> Bool) -> [a] -> Bool
+any f (x:xs)
   | f x = True
-  | otherwise = anyFunc f xs
-anyFunc _ [] = False
+  | otherwise = any f xs
+any _ [] = False
 
-reduceFunc :: (a -> b -> a) -> a -> [b] -> a
-reduceFunc f acc (x:xs) =
+reduce :: (a -> b -> a) -> a -> [b] -> a
+reduce f acc (x:xs) =
   let acc' = f acc x
-  in reduceFunc f acc' xs
-reduceFunc _ acc [] = acc
+  in reduce f acc' xs
+reduce _ acc [] = acc
 
-sumFunc :: [Int] -> Int
-sumFunc (x:xs) = x + sumFunc xs
-sumFunc [] = 0
+sum :: [Int] -> Int
+sum (x:xs) = x + sum xs
+sum [] = 0
 
-countFunc :: [a] -> Int
-countFunc = helpCount 0
+count :: [a] -> Int
+count = helpCount 0
   where 
     helpCount a (_:xs) = helpCount (a + 1) xs
     helpCount a [] = a
 
-concatFunc :: [[a]] -> [a]
-concatFunc [] = []
-concatFunc ([]:vs) = concatFunc vs
-concatFunc ((x:xs):vs) = x : concatFunc (xs:vs)
+concat :: [[a]] -> [a]
+concat [] = []
+concat ([]:vs) = concat vs
+concat ((x:xs):vs) = x : concat (xs:vs)
 
-reverseFunc :: [a] -> [a]
-reverseFunc arr = rev arr []
+reverse :: [a] -> [a]
+reverse arr = rev arr []
   where
     rev [] a     = a
     rev (x:xs) a = rev xs (x:a)
 
-takeFunc :: Int -> [a] -> [a]
-takeFunc c (x:xs)
-  | c > 0     = x : takeFunc (c - 1) xs
+take :: Int -> [a] -> [a]
+take c (x:xs)
+  | c > 0     = x : take (c - 1) xs
   | otherwise = []
-takeFunc _ [] = []
+take _ [] = []
 
-skipFunc :: Int -> [a] -> [a]
-skipFunc c xs'@(_:xs)
-  | c > 1     = skipFunc (c - 1) xs
+skip :: Int -> [a] -> [a]
+skip c xs'@(_:xs)
+  | c > 1     = skip (c - 1) xs
   | c < 1     = xs'
   | c == 1    = xs
   | otherwise = []
-skipFunc _ [] = []
+skip _ [] = []
 
-addFunc :: a -> [a] -> [a]
-addFunc el (x:xs) = x : addFunc el xs
-addFunc el [] = [el]
+add :: a -> [a] -> [a]
+add el (x:xs) = x : add el xs
+add el [] = [el]
 
-insertFunc :: a -> Int -> [a] -> [a]
-insertFunc el pos (x:xs)
-  | pos > 0   = x : insertFunc el (pos - 1) xs
+insert :: a -> Int -> [a] -> [a]
+insert el pos (x:xs)
+  | pos > 0   = x : insert el (pos - 1) xs
   | pos < 0   = error "Invalid pos"
   | pos == 0  = el : (x:xs)
   | otherwise = x:xs
-insertFunc _ _ [] = []
+insert _ _ [] = []
 
-removeFunc :: (Eq a) => a -> [a] -> [a]
-removeFunc el (x:xs) 
-  | el /= x   = x : removeFunc el xs
-  | otherwise = removeFunc el xs
-removeFunc _ [] = []
+remove :: (Eq a) => a -> [a] -> [a]
+remove el (x:xs) 
+  | el /= x   = x : remove el xs
+  | otherwise = remove el xs
+remove _ [] = []
 
-removeAtFunc :: Int -> [a] -> [a]
-removeAtFunc pos xs'@(x:xs)
-  | pos > 0   = x : removeAtFunc (pos - 1) xs
+removeAt :: Int -> [a] -> [a]
+removeAt pos xs'@(x:xs)
+  | pos > 0   = x : removeAt (pos - 1) xs
   | pos == 0  = xs
   | otherwise = xs'
-removeAtFunc _ [] = [] 
+removeAt _ [] = [] 
 
 
 
