@@ -2,4 +2,7 @@ module Main (main) where
 
 
 main :: IO ()
-main = putChar 's'
+main = do
+    putStrLn "String"
+    putStrLn "String"
+    putStrLn "String"
