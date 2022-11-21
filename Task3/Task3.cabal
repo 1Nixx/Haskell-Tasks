@@ -25,7 +25,18 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Data.CommonEntity
+      Data.Context
+      Data.Entities
+      Data.Models
+      Repositories.Customers
+      Repositories.Orders
+      Repositories.Products
+      Repositories.Shops
+      Services.Customer
+      Services.Orders
+      Services.Products
+      Services.Shops
   other-modules:
       Paths_Task3
   hs-source-dirs:
