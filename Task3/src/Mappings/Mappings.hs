@@ -14,6 +14,7 @@ import Data.Entities
     , productColor
     , Customer(..))
 import Data.Models (ProductModel(..), ShopModel(..), OrderModel(..), CustomerModel (..))
+import Utils.Utils (maybeHead)
 
 mapProductToModel :: Product -> Maybe Shop -> ProductModel
 mapProductToModel prod maybeShop =
@@ -46,7 +47,7 @@ mapCustomerToModel :: Customer -> Maybe [Order] -> Maybe [(Int, [Product])] -> C
 mapCustomerToModel cust maybeOrders prodDict =
     let orderModel = case maybeOrders of
             Just orderV -> case prodDict of
-                    Just dict -> Just $ map (\o -> mapOrderToModel o Nothing (getByKey (orderId o) dict)) orderV
+                    Just dict -> Just $ map (\o -> mapOrderToModel o Nothing (maybeHead $ map snd $ filter (\x -> fst x == orderId o) dict)) orderV
                     Nothing -> Just $ map (\o -> mapOrderToModel o Nothing Nothing) orderV
             Nothing -> Nothing
     in CustomerModel {
@@ -55,11 +56,7 @@ mapCustomerToModel cust maybeOrders prodDict =
         customerModelAddress = customerAddress cust,
         customerModelOrders = orderModel
     }
-    where 
-        getByKey key (x:xs)
-            | fst x == key = Just $ snd x
-            | otherwise = getByKey key xs
-        getByKey _ [] = Nothing  
+
 
 mapShopToModel :: Shop -> Maybe [Product] -> ShopModel
 mapShopToModel sp maybeProduct =

@@ -26,8 +26,4 @@ getProductsByShopId searchShopId = filter (\ a -> productShopId a == searchShopI
 getProductsWithOrdersId :: [(Int, [Product])]
 getProductsWithOrdersId = 
     let orderIds = getOrders
-    in itterate orderIds
-    where 
-        itterate :: [Order] -> [(Int, [Product])]
-        itterate (x:xs) = (orderId x, getProductsByOrderId $ orderId x) : itterate xs
-        itterate [] = []
+    in map (\x -> (orderId x, getProductsByOrderId $ orderId x)) orderIds
