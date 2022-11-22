@@ -1,12 +1,19 @@
-module Services.Customer 
+module Services.Customer
     ( getCustomers
     , getCustomer) where
 
-import Data.Models (CustomerModel (CustomerModel))
+import Data.Models (CustomerModel)
 import qualified Repositories.Customers as CustomerRep
+import qualified Repositories.Orders as OrderRep
+import Mappings.Mappings (mapCustomerToModel)
 
 getCustomers :: [CustomerModel]
-getCustomers = map (\ o -> CustomerModel 1 1 1 Nothing) CustomerRep.getCustomers
+getCustomers = map (`mapCustomerToModel` Nothing) CustomerRep.getCustomers
 
 getCustomer :: Int -> Maybe CustomerModel
-getCustomer custId = Nothing
+getCustomer custId = 
+    let orders = Just $ OrderRep.getOrdersByCustomerId custId
+        customer = CustomerRep.getCustomerById custId
+    in case customer of 
+        Nothing -> Nothing
+        Just value -> Just $ mapCustomerToModel value orders

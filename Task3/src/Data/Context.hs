@@ -9,13 +9,58 @@ import Data.Entities(Customer(..), Shop(..), Order(..), Product (Product), Produ
 import Data.CommonEntity
 
 customers :: [Customer]
-customers = [Customer 1 "Nikita" "Minsk", Customer 2 "Misha" "Gomel", Customer 3 "Andrey" "USA"]
+customers = [
+    Customer {
+        customerId = 1,
+        customerName = "Nikita",
+        customerAddress = "Minsk"
+    },
+    Customer {
+        customerId = 2,
+        customerName = "Misha",
+        customerAddress = "Gomel"
+    },
+    Customer {
+        customerId = 3,
+        customerName = "Andrey",
+        customerAddress = "USA"
+    }]
 
 shops :: [Shop]
-shops = [Shop 1 "H&M" "Minsk", Shop 2 "Rybanok" "Vitebsk", Shop 3 "Malorita" "Poland"]
+shops = [
+    Shop {
+        shopId = 1,
+        shopName = "H&M",
+        shopAddress = "Minsk"
+    },
+    Shop {
+        shopId = 2,
+        shopName = "Rybanok",
+        shopAddress = "Vitebsk"
+    },
+    Shop {
+        shopId = 3,
+        shopName = "Malorita",
+        shopAddress = "Poland"
+    }]
 
 orders :: [Order]
-orders = [Order 1 2 "45AB", Order 2 2 "555IK", Order 3 1 "741hjk"]
+orders = [
+    Order {
+        orderId = 1,
+        orderCustomerId = 2,
+        orderNumber = "45AB"
+    }, 
+    Order {
+        orderId = 2,
+        orderCustomerId = 2,
+        orderNumber = "555IK"
+    },  
+    Order {
+        orderId = 3,
+        orderCustomerId = 1,
+        orderNumber = "741hjk"
+    }]
 
 products :: [Product]
 products = [
@@ -25,7 +70,23 @@ products = [
 
 productOrders :: [ProductOrder]
 productOrders = [
-    ProductOrder 1 1 1,
-    ProductOrder 2 1 3,
-    ProductOrder 3 3 1, 
-    ProductOrder 4 2 1]
+    ProductOrder {
+        productOrderId = 1,
+        orderFKId = 1,
+        prodFKId = 1
+    },
+    ProductOrder {
+        productOrderId = 2,
+        orderFKId = 1,
+        prodFKId = 3
+    },
+    ProductOrder {
+        productOrderId = 3,
+        orderFKId = 3,
+        prodFKId = 1
+    }, 
+    ProductOrder {
+        productOrderId = 4,
+        orderFKId = 2,
+        prodFKId = 1
+    }]

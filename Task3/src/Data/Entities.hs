@@ -3,12 +3,12 @@ module Data.Entities
     , Shop(..)
     , Order(..)
     , Product(..)
+    , ProductOrder(..)
     , productId
     , productShopId
     , productName
     , productPrice
-    , productColor
-    , ProductOrder(..)) where
+    , productColor) where
 
 import Data.CommonEntity (Color)
 

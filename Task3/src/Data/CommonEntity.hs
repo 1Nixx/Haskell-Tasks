@@ -5,3 +5,4 @@ where
 data Color = Black 
             | White
             | Other
+            deriving (Show)

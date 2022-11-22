@@ -29,6 +29,7 @@ library
       Data.Context
       Data.Entities
       Data.Models
+      Mappings.Mappings
       Repositories.Customers
       Repositories.Orders
       Repositories.Products
@@ -37,6 +38,7 @@ library
       Services.Orders
       Services.Products
       Services.Shops
+      Utils.Utils
   other-modules:
       Paths_Task3
   hs-source-dirs:

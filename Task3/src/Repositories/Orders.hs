@@ -1,13 +1,14 @@
 module Repositories.Orders 
-    ( getCustomerById
+    ( getOrderById
     , getOrders
     , getOrdersByCustomerId) where
 
 import Data.Entities(Order(..))
 import Data.Context (orders)
+import Utils.Utils (maybeHead)
 
-getCustomerById :: Int -> Order
-getCustomerById searchId = head $ filter (\a -> orderId a == searchId) orders
+getOrderById :: Int -> Maybe Order
+getOrderById searchId = maybeHead $ filter (\a -> orderId a == searchId) orders
 
 getOrders :: [Order]
 getOrders = orders

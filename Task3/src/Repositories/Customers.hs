@@ -4,9 +4,10 @@ module Repositories.Customers
 
 import Data.Entities (Customer(..))
 import Data.Context (customers)
+import Utils.Utils (maybeHead)
 
-getCustomerById :: Int -> Customer
-getCustomerById searchId = head $ filter (\a -> customerId a == searchId) customers
+getCustomerById :: Int -> Maybe Customer
+getCustomerById searchId = maybeHead $ filter (\a -> customerId a == searchId) customers
 
 getCustomers :: [Customer]
 getCustomers = customers
