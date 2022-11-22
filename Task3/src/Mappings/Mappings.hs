@@ -14,7 +14,6 @@ import Data.Entities
     , productColor
     , Customer(..))
 import Data.Models (ProductModel(..), ShopModel(..), OrderModel(..), CustomerModel (..))
-import Data.Maybe (fromJust)
 
 mapProductToModel :: Product -> Maybe Shop -> ProductModel
 mapProductToModel prod maybeShop =
@@ -31,7 +30,7 @@ mapProductToModel prod maybeShop =
 mapOrderToModel :: Order -> Maybe Customer -> Maybe [Product] -> OrderModel
 mapOrderToModel ord maybeCustomer maybeProducts =
     let customerModel = case maybeCustomer of
-            Just value -> Just $ mapCustomerToModel value Nothing Nothing Nothing
+            Just value -> Just $ mapCustomerToModel value Nothing Nothing
             Nothing -> Nothing
         productModel = case maybeProducts of
             Just value -> Just $ map (`mapProductToModel` Nothing) value
@@ -43,11 +42,11 @@ mapOrderToModel ord maybeCustomer maybeProducts =
         orderModelProducts = productModel
     }
 
-mapCustomerToModel :: Customer -> Maybe [Order] -> Maybe [Product] -> Maybe (Product -> Int -> Bool) -> CustomerModel
-mapCustomerToModel cust maybeOrders prodList selectorF =
+mapCustomerToModel :: Customer -> Maybe [Order] -> Maybe [(Int, [Product])] -> CustomerModel
+mapCustomerToModel cust maybeOrders prodDict =
     let orderModel = case maybeOrders of
-            Just orderV -> case selectorF of
-                    Just selector -> Just $ map (\o -> mapOrderToModel o Nothing (Just $ filter (\a -> selector a (orderId o)) (fromJust prodList))) orderV
+            Just orderV -> case prodDict of
+                    Just dict -> Just $ map (\o -> mapOrderToModel o Nothing (getByKey (orderId o) dict)) orderV
                     Nothing -> Just $ map (\o -> mapOrderToModel o Nothing Nothing) orderV
             Nothing -> Nothing
     in CustomerModel {
@@ -56,6 +55,11 @@ mapCustomerToModel cust maybeOrders prodList selectorF =
         customerModelAddress = customerAddress cust,
         customerModelOrders = orderModel
     }
+    where 
+        getByKey key (x:xs)
+            | fst x == key = Just $ snd x
+            | otherwise = getByKey key xs
+        getByKey _ [] = Nothing  
 
 mapShopToModel :: Shop -> Maybe [Product] -> ShopModel
 mapShopToModel sp maybeProduct =

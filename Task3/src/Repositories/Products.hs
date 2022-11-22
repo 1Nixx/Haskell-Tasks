@@ -3,12 +3,13 @@ module Repositories.Products
     , getProducts
     , getProductsByOrderId
     , getProductsByShopId
-    , isProductInOrder) where
+    , getProductsWithOrdersId) where
 
-import Data.Entities (Product(..), productId, productShopId, ProductOrder (..))
+import Data.Entities (Product(..), productId, productShopId, ProductOrder (..), Order(..))
 import Data.Context (products, productOrders)
 import Utils.Utils (maybeHead)
 import Data.Maybe (fromJust)
+import Repositories.Orders (getOrders) 
 
 getProductById :: Int -> Maybe Product
 getProductById searchId = maybeHead $ filter (\a -> productId a == searchId) getProducts
@@ -22,5 +23,11 @@ getProductsByOrderId searchOrderId = map (fromJust . getProductById . prodFKId) 
 getProductsByShopId :: Int -> [Product]
 getProductsByShopId searchShopId = filter (\ a -> productShopId a == searchShopId) getProducts
 
-isProductInOrder :: Product -> Int -> Bool
-isProductInOrder prod ordId = any (\ a -> orderFKId a == ordId && prodFKId a == productId prod) productOrders
+getProductsWithOrdersId :: [(Int, [Product])]
+getProductsWithOrdersId = 
+    let orderIds = getOrders
+    in itterate orderIds
+    where 
+        itterate :: [Order] -> [(Int, [Product])]
+        itterate (x:xs) = (orderId x, getProductsByOrderId $ orderId x) : itterate xs
+        itterate [] = []
