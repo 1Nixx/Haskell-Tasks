@@ -7,7 +7,7 @@ import Data.Context (customers)
 import Utils.Utils (maybeHead)
 
 getCustomerById :: Int -> Maybe Customer
-getCustomerById searchId = maybeHead $ filter (\a -> customerId a == searchId) customers
+getCustomerById searchId = maybeHead $ filter (\a -> customerId a == searchId) getCustomers
 
 getCustomers :: [Customer]
 getCustomers = customers

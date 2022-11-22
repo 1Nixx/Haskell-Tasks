@@ -14,6 +14,7 @@ import Data.Entities
     , productColor
     , Customer(..))
 import Data.Models (ProductModel(..), ShopModel(..), OrderModel(..), CustomerModel (..))
+import Data.Maybe (fromJust)
 
 mapProductToModel :: Product -> Maybe Shop -> ProductModel
 mapProductToModel prod maybeShop =
@@ -23,14 +24,14 @@ mapProductToModel prod maybeShop =
                 shopModelName = shopName value,
                 shopModelAddress = shopAddress value,
                 shopModelProducts = Nothing
-            } 
+            }
             Nothing -> Nothing
     in ProductModel (productId prod) shopModel (productName prod) (productPrice prod) (productColor prod)
 
 mapOrderToModel :: Order -> Maybe Customer -> Maybe [Product] -> OrderModel
 mapOrderToModel ord maybeCustomer maybeProducts =
     let customerModel = case maybeCustomer of
-            Just value -> Just $ mapCustomerToModel value Nothing Nothing
+            Just value -> Just $ mapCustomerToModel value Nothing Nothing Nothing
             Nothing -> Nothing
         productModel = case maybeProducts of
             Just value -> Just $ map (`mapProductToModel` Nothing) value
@@ -42,12 +43,12 @@ mapOrderToModel ord maybeCustomer maybeProducts =
         orderModelProducts = productModel
     }
 
-mapCustomerToModel :: Customer -> Maybe [Order] -> Maybe (Int -> [Product]) -> CustomerModel
-mapCustomerToModel cust maybeOrders maybeFunc =
+mapCustomerToModel :: Customer -> Maybe [Order] -> Maybe [Product] -> Maybe (Product -> Int -> Bool) -> CustomerModel
+mapCustomerToModel cust maybeOrders prodList selectorF =
     let orderModel = case maybeOrders of
-            Just value -> case maybeFunc of 
-                Nothing -> Just $ map (\o -> mapOrderToModel o Nothing Nothing) value
-                Just funcValue -> Just $ map (\o -> mapOrderToModel o Nothing ( Just $ funcValue $ orderId o)) value
+            Just orderV -> case selectorF of
+                    Just selector -> Just $ map (\o -> mapOrderToModel o Nothing (Just $ filter (\a -> selector a (orderId o)) (fromJust prodList))) orderV
+                    Nothing -> Just $ map (\o -> mapOrderToModel o Nothing Nothing) orderV
             Nothing -> Nothing
     in CustomerModel {
         customerModelId = customerId cust,
