@@ -30,7 +30,7 @@ mapProductToModel prod maybeShop =
 mapOrderToModel :: Order -> Maybe Customer -> Maybe [Product] -> OrderModel
 mapOrderToModel ord maybeCustomer maybeProducts =
     let customerModel = case maybeCustomer of
-            Just value -> Just $ mapCustomerToModel value Nothing
+            Just value -> Just $ mapCustomerToModel value Nothing Nothing
             Nothing -> Nothing
         productModel = case maybeProducts of
             Just value -> Just $ map (`mapProductToModel` Nothing) value
@@ -42,10 +42,12 @@ mapOrderToModel ord maybeCustomer maybeProducts =
         orderModelProducts = productModel
     }
 
-mapCustomerToModel :: Customer -> Maybe [Order] -> CustomerModel
-mapCustomerToModel cust maybeOrders =
+mapCustomerToModel :: Customer -> Maybe [Order] -> Maybe (Int -> [Product]) -> CustomerModel
+mapCustomerToModel cust maybeOrders maybeFunc =
     let orderModel = case maybeOrders of
-            Just value -> Just $ map (\o -> mapOrderToModel o Nothing Nothing) value
+            Just value -> case maybeFunc of 
+                Nothing -> Just $ map (\o -> mapOrderToModel o Nothing Nothing) value
+                Just funcValue -> Just $ map (\o -> mapOrderToModel o Nothing ( Just $ funcValue $ orderId o)) value
             Nothing -> Nothing
     in CustomerModel {
         customerModelId = customerId cust,

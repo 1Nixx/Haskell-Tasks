@@ -8,7 +8,7 @@ import qualified Services.Shops as ShopService
 main :: IO ()
 main = do
     putStrLn "CustomerService"
-    let a = CustomerService.getCustomer 1
+    let a = CustomerService.getCustomer 2
     print a
     putStrLn ""
 
