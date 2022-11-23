@@ -42,7 +42,7 @@ mapCustomerToModel :: Customer -> Maybe [Order] -> Maybe [(Int, [Product])] -> C
 mapCustomerToModel cust maybeOrders prodDict =
     let orderModel = case maybeOrders of
             Just orderV -> case prodDict of
-                    Just dict -> Just $ map (\o -> mapOrderToModel o Nothing (maybeHead $ map snd $ filter (\x -> fst x == orderId o) dict)) orderV
+                    Just dict -> Just $ map (\o -> mapOrderToModel o Nothing (getProductsFromDict o dict)) orderV
                     Nothing -> Just $ map (\o -> mapOrderToModel o Nothing Nothing) orderV
             Nothing -> Nothing
     in CustomerModel {
@@ -51,6 +51,7 @@ mapCustomerToModel cust maybeOrders prodDict =
         customerModelAddress = customerAddress cust,
         customerModelOrders = orderModel
     }
+    where getProductsFromDict order = maybeHead . map snd . filter (\x -> fst x == orderId order)
 
 
 mapShopToModel :: Shop -> Maybe [Product] -> ShopModel
