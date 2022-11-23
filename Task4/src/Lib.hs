@@ -13,10 +13,19 @@ module Lib
     , max
     , min
     , reduce
-    , concat) where
+    , concat
+    , reverse
+    , take
+    , skip
+    , add
+    , insert
+    , remove
+    , removeAt
+    , while
+    , until) where
 
 import Prelude hiding
-    (map, foldl, foldr, filter, all, any, sum, max, min, concat)
+    (map, foldl, foldr, filter, all, any, sum, max, min, concat, reverse, take, until)
 
 foldl :: (a -> b -> a) -> a -> [b] -> a
 foldl step var (x:xs) = foldl step (step var x) xs
@@ -43,12 +52,10 @@ filter cond = foldr (\y ys -> if cond y then y : ys
                               else ys) []
 
 all :: (a -> Bool) -> [a] -> Bool
-all cond xs = 0 == foldl (\ys y -> if cond y then ys
-                                   else ys + 1) 0 xs
+all cond = foldr (\y ys -> cond y && ys) True
 
 any :: (a -> Bool) -> [a] -> Bool
-any cond xs = 0 /= foldl (\ys y -> if cond y then ys + 1
-                                    else ys) 0 xs
+any cond = foldr (\y ys -> cond y || ys) False
 
 sum :: Num a => [a] -> a
 sum = foldl (+) 0
@@ -71,3 +78,51 @@ concat = foldl (++) []
 reverse :: [a] -> [a]
 reverse = foldl (\ys y -> y : ys) []
 
+take :: Int -> [a] -> [a]
+take n xs = foldr step [] (indexArr 1 xs)
+    where step (i, a) rest
+               | i > n     = []
+               | otherwise = a:rest
+
+skip :: Int -> [a] -> [a]
+skip n xs = foldr step [] (indexArr 1 xs)
+    where step (i, a) rest
+               | i > n     = a:rest
+               | otherwise = rest
+
+insert :: a -> Int -> [a] -> [a]
+insert el pos xs = foldr step [] (indexArr 1 xs)
+    where step (i, a) rest
+                | i == pos = el:a:rest
+                | otherwise = a:rest
+
+indexArr :: Enum i => i -> [a] -> [(i, a)]
+indexArr i = zip [i..]
+
+add :: a -> [a] -> [a]
+add el = foldr (:) [el]
+
+remove :: (Eq a) => a -> [a] -> [a]
+remove el = foldr step []
+    where step y ys
+            | y == el   = ys
+            | otherwise = y : ys
+
+removeAt :: Int -> [a] -> [a]
+removeAt pos xs = foldr step [] (indexArr 1 xs)
+    where step (i, a) res 
+                | i == pos = res
+                | otherwise = a : res
+
+
+while :: (a -> Bool) -> (a -> b) -> [a] -> [b]
+while cond f = foldr step []
+    where step el acc
+              | cond el   = f el:acc
+              | otherwise = []
+
+until :: (a -> Bool) -> (a -> b) -> [a] -> [b]
+until cond f = foldr step []
+    where step el acc
+              | cond el   = f el:acc
+              | otherwise = [f el]
