@@ -19,12 +19,7 @@ import Utils.Utils (maybeHead)
 mapProductToModel :: Product -> Maybe Shop -> ProductModel
 mapProductToModel prod maybeShop =
     let shopModel = case maybeShop of
-            Just value -> Just $ ShopModel {
-                shopModelId = shopId value,
-                shopModelName = shopName value,
-                shopModelAddress = shopAddress value,
-                shopModelProducts = Nothing
-            }
+            Just value -> Just $ mapShopToModel value Nothing
             Nothing -> Nothing
     in ProductModel (productId prod) shopModel (productName prod) (productPrice prod) (productColor prod)
 
