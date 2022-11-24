@@ -3,6 +3,7 @@ module Main (main) where
 
 import Lib
 import Data.Foldable (Foldable(foldl, fold))
+import Data.String (String)
 
 main :: IO ()
 main = do
@@ -26,6 +27,7 @@ main = do
     print (insert 123 1 testArr)
     print (remove 4 testArr)
     print (removeAt 1 testArr) 
+    print (groupBy (\x y -> (x*y `mod` 3) == 0) [1,2,3,4,5,6,7,8,9])
 
 testArr :: [Int]
 testArr = [1, 2, 3, 4]
@@ -38,3 +40,9 @@ testConcatArr = [[1, 2, 3], [], [5, 6, 8]]
 
 reduceIns :: Int -> Int -> Int
 reduceIns a b = a + b * 3
+
+data Product = Product {
+    productId :: Int,
+    productName :: String,
+    productPrice :: Double
+}
