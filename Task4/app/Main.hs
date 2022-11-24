@@ -28,6 +28,37 @@ main = do
     print (remove 4 testArr)
     print (removeAt 1 testArr) 
     print (groupBy (\x y -> (x*y `mod` 3) == 0) [1,2,3,4,5,6,7,8,9])
+    print (groupBy (\x y -> productPrice x == productPrice y) testProductList)
+    
+
+testProductList :: [Product]
+testProductList = [
+        Product {
+            productId = 1,
+            productName = "Test1",
+            productPrice = 45.55
+        },
+        Product {
+            productId = 2,
+            productName = "Test2",
+            productPrice = 23.8
+        },
+        Product {
+            productId = 3,
+            productName = "Test3",
+            productPrice = 83.9
+        },
+        Product {
+            productId = 5,
+            productName = "Test5",
+            productPrice = 83.9
+        },
+        Product {
+            productId = 4,
+            productName = "Test4",
+            productPrice = 30.5
+        }
+    ]
 
 testArr :: [Int]
 testArr = [1, 2, 3, 4]
@@ -45,4 +76,4 @@ data Product = Product {
     productId :: Int,
     productName :: String,
     productPrice :: Double
-}
+} deriving (Show)

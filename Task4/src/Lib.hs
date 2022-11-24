@@ -129,12 +129,16 @@ until cond f = foldr step []
 
 groupBy :: (a -> a -> Bool) -> [a] -> [[a]]
 groupBy _  []     = []
-groupBy eq (x:xs) = (x:ys) : groupBy eq (reverse zs)
+groupBy eq (x:xs) = (x:ys) : groupBy eq zs
     where (ys,zs) = divByCond (eq x) xs
 
 divByCond :: (a -> Bool) -> [a] -> ([a], [a])
-divByCond cond xs = snd $ foldl (\ys y -> 
-                    if not (fst ys) && cond y 
-                    then (False, (y : fst (snd ys), snd $ snd ys)) 
-                    else  (True, (fst $ snd  ys, y: snd (snd ys))))
-                    (False, ([], [])) xs
+-- divByCond cond xs = snd $ foldl (\ys y -> 
+--                     if not (fst ys) && cond y 
+--                     then (False, (y : fst (snd ys), snd $ snd ys)) 
+--                     else  (True, (fst $ snd  ys, y: snd (snd ys))))
+--                     (False, ([], [])) xs
+
+divByCond cond = foldr (\y ys -> if cond y
+                 then (y : fst ys, snd ys)
+                 else ([], y : fst ys ++ snd ys)) ([], [])
