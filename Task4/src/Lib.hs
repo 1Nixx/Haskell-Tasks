@@ -128,11 +128,12 @@ until cond f = foldr step []
               | otherwise = [f el]
 
 groupBy :: (Eq b) => (a -> b) -> [a] -> [[a]]
-groupBy sel = map snd . foldr step []
+groupBy sel xs = map snd $ foldr step [] xs
     where
         step el acc
-            | isInDict (sel el) acc = foldr (\elArr accArr -> if fst elArr == sel el
-                                                              then (fst elArr, el : snd elArr) : accArr
-                                                              else elArr : accArr ) [] acc
+            | isInDict (sel el) acc = 
+                foldr (\elArr accArr -> if fst elArr == sel el
+                                        then (fst elArr, el : snd elArr) : accArr
+                                        else elArr : accArr ) [] acc
             | otherwise = (sel el, [el]) : acc
-        isInDict key = foldr (\elemA _ -> fst elemA == key) False
+        isInDict key = foldr (\y ys -> fst y == key || ys) False 
