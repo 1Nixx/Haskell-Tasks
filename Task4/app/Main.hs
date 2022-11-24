@@ -1,7 +1,8 @@
-{-# LANGUAGE NoImplicitPrelude #-}
 module Main (main) where
 
 import Lib
+import Prelude hiding
+    (map, foldl, foldr, filter, all, any, sum, max, min, concat, reverse, take, until, groupBy)
 
 main :: IO ()
 main = do
@@ -24,9 +25,9 @@ main = do
     print (add 12818 testArr)
     print (insert 123 1 testArr)
     print (remove 4 testArr)
-    print (removeAt 1 testArr) 
-    print (groupBy (\x y -> (x*y `mod` 3) == 0) [1,2,3,4,5,6,7,8,9])
-    print (groupBy (\x y -> productPrice x == productPrice y) testProductList)
+    print (removeAt 1 testArr)
+    print (groupBy id [1,2,3,4,5,6,7,8,9])
+    print (groupBy productPrice testProductList)
 
 testProductList :: [Product]
 testProductList = [

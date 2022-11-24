@@ -1,6 +1,6 @@
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Lib
-    ( module Prelude
-    , foldl
+    ( foldl
     , foldr
     , foldl'
     , map
@@ -127,18 +127,12 @@ until cond f = foldr step []
               | cond el   = f el:acc
               | otherwise = [f el]
 
-groupBy :: (a -> a -> Bool) -> [a] -> [[a]]
-groupBy _  []     = []
-groupBy eq (x:xs) = (x:ys) : groupBy eq zs
-    where (ys,zs) = divByCond (eq x) xs
-
-divByCond :: (a -> Bool) -> [a] -> ([a], [a])
--- divByCond cond xs = snd $ foldl (\ys y -> 
---                     if not (fst ys) && cond y 
---                     then (False, (y : fst (snd ys), snd $ snd ys)) 
---                     else  (True, (fst $ snd  ys, y: snd (snd ys))))
---                     (False, ([], [])) xs
-
-divByCond cond = foldr (\y ys -> if cond y
-                 then (y : fst ys, snd ys)
-                 else ([], y : fst ys ++ snd ys)) ([], [])
+groupBy :: (Eq b) => (a -> b) -> [a] -> [[a]]
+groupBy sel = map snd . foldr step []
+    where
+        step el acc
+            | isInDict (sel el) acc = foldr (\elArr accArr -> if fst elArr == sel el
+                                                              then (fst elArr, el : snd elArr) : accArr
+                                                              else elArr : accArr ) [] acc
+            | otherwise = (sel el, [el]) : acc
+        isInDict key = foldr (\elemA _ -> fst elemA == key) False
