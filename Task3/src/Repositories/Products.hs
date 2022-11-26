@@ -32,4 +32,12 @@ getProductsByShopId :: Int -> IO [Product]
 getProductsByShopId searchShopId = filter (\ a -> productShopId a == searchShopId) <$> getProducts
 
 getProductsWithOrdersId :: IO [(Int, [Product])]
-getProductsWithOrdersId = map (\x -> (orderId x,  getProductsByOrderId $ orderId x)) <$> getOrders
+getProductsWithOrdersId = do
+    orders <- getOrders
+    mapM step orders
+    where
+        step :: Order -> IO (Int, [Product])
+        step ord = do
+            let orderid = orderId ord
+            products <- getProductsByOrderId orderid
+            return (orderid, products)

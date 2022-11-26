@@ -8,13 +8,14 @@ import qualified Repositories.Orders as OrderRep
 import qualified Repositories.Products as ProductRep
 import Mappings.Mappings (mapCustomerToModel)
 
-getCustomers :: [CustomerModel]
-getCustomers = map (\o -> mapCustomerToModel o Nothing Nothing) CustomerRep.getCustomers
+getCustomers :: IO [CustomerModel]
+getCustomers = map (\o -> mapCustomerToModel o Nothing Nothing) <$> CustomerRep.getCustomers
 
-getCustomer :: Int -> Maybe CustomerModel
-getCustomer custId =
-    let orders = Just $ OrderRep.getOrdersByCustomerId custId
-        customer = CustomerRep.getCustomerById custId
-    in case customer of
-        Nothing -> Nothing
-        Just value -> Just $ mapCustomerToModel value orders (Just ProductRep.getProductsWithOrdersId)
+getCustomer :: Int -> IO (Maybe CustomerModel)
+getCustomer custId = do
+    customer <- CustomerRep.getCustomerById custId
+    case customer of
+        Nothing -> return Nothing
+        Just value -> do
+            orders <- OrderRep.getOrdersByCustomerId custId
+            Just . mapCustomerToModel value (Just orders) . Just <$> ProductRep.getProductsWithOrdersId

@@ -8,7 +8,7 @@ readEntityFile :: String -> IO String
 readEntityFile entityName = do
     input <- openFile (fileName entityName) ReadMode
     text <- hGetContents input
-    putStr text
+    putStrLn text
     hClose input
     return text
 
@@ -44,8 +44,8 @@ replaceLine entityName line lineInd = do
     writeEntityFile entityName resultRows
     addLine entityName line
 
-fileName :: String -> String 
-fileName entityName = "/Files/" ++ entityName
+fileName :: String -> String
+fileName entityName = "C:\\Users\\hripa\\Desktop\\Work\\Haskell-Tasks\\Task3/src/Files/" ++ entityName ++ ".txt"
 
 removeAt :: Int -> [a] -> [a]
 removeAt pos xs'@(x:xs)

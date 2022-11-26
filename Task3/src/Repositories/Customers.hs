@@ -15,3 +15,4 @@ getCustomers :: IO [Customer]
 getCustomers = do
     customersFile <- readEntityFields "Customers"
     return (map readEntity customersFile)
+
