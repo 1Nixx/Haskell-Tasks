@@ -1,6 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
+module Data.Converters.ProductOrderConverter 
+    (readEntity) where
+
 import Data.Entities (ProductOrder(..))
 
 instance Show ProductOrder where   

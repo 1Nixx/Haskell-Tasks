@@ -7,25 +7,29 @@ module Repositories.Products
     , getProductsWithOrdersId) where
 
 import Data.Entities (Product(..), productId, productShopId, ProductOrder (..), Order(..))
-import Data.Context (products, productOrders)
 import Utils.Utils (maybeHead)
 import Data.Maybe (fromJust)
 import Repositories.Orders (getOrders)
-import Data.CommonEntity (Color)
+import Utils.Files (readEntityFields)
+import qualified Data.Converters.ProductConverter as PC
+import qualified Data.Converters.ProductOrderConverter as POC
 
-getProductById :: Int -> Maybe Product
-getProductById searchId = maybeHead $ filter (\a -> productId a == searchId) getProducts
+getProductById :: Int -> IO(Maybe Product)
+getProductById searchId = maybeHead . filter (\a -> productId a == searchId) <$> getProducts
 
-getProducts :: [Product]
-getProducts = products
+getProducts :: IO [Product]
+getProducts = do
+    productsFile <- readEntityFields "Products"
+    return (map PC.readEntity productsFile)
 
-getProductsByOrderId :: Int -> [Product]
-getProductsByOrderId searchOrderId = map (fromJust . getProductById . prodFKId) $ filter (\ a -> orderFKId a == searchOrderId) productOrders
+getProductsByOrderId :: Int -> IO [Product]
+getProductsByOrderId searchOrderId = do
+    productOrdersFile <- readEntityFields "ProductOrders"
+    let productOrders = map POC.readEntity productOrdersFile
+    mapM (fmap fromJust . getProductById . prodFKId) $ filter (\ a -> orderFKId a == searchOrderId) productOrders
 
-getProductsByShopId :: Int -> [Product]
-getProductsByShopId searchShopId = filter (\ a -> productShopId a == searchShopId) getProducts
+getProductsByShopId :: Int -> IO [Product]
+getProductsByShopId searchShopId = filter (\ a -> productShopId a == searchShopId) <$> getProducts
 
-getProductsWithOrdersId :: [(Int, [Product])]
-getProductsWithOrdersId =
-    let orderIds = getOrders
-    in map (\x -> (orderId x, getProductsByOrderId $ orderId x)) orderIds
+getProductsWithOrdersId :: IO [(Int, [Product])]
+getProductsWithOrdersId = map (\x -> (orderId x,  getProductsByOrderId $ orderId x)) <$> getOrders

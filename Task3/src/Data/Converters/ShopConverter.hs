@@ -1,6 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
+module Data.Converters.ShopConverter 
+    (readEntity) where
+
 import Data.Entities (Shop(..))
 
 instance Show Shop where   

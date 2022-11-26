@@ -1,6 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
+module Data.Converters.CustomerConverter 
+    (readEntity) where
+
 import Data.Entities (Customer(..))
 
 instance Show Customer where   

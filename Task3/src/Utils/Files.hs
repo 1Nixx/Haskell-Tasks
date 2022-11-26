@@ -1,3 +1,5 @@
+module Utils.Files (readEntityFields, deleteLine, addLine, replaceLine) where
+
 import System.IO
     ( hClose, hGetContents, openFile, IOMode(ReadMode) )
 import qualified Data.Text as Text
@@ -14,8 +16,8 @@ writeEntityFile :: String -> String -> IO ()
 writeEntityFile entityName text = do
     writeFile (fileName entityName) text
 
-readEntity :: String -> IO [[String]]
-readEntity entityName = do
+readEntityFields :: String -> IO [[String]]
+readEntityFields entityName = do
     text <- readEntityFile entityName
     let splitByFields = map (map Text.unpack . Text.split (=='|') . Text.pack ) (lines text)
     return splitByFields

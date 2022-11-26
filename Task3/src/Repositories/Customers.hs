@@ -3,11 +3,15 @@ module Repositories.Customers
     , getCustomers) where
 
 import Data.Entities (Customer(..))
-import Data.Context (customers)
 import Utils.Utils (maybeHead)
+import Utils.Files (readEntityFields)
+import Data.Converters.CustomerConverter (readEntity)
 
-getCustomerById :: Int -> Maybe Customer
-getCustomerById searchId = maybeHead $ filter (\a -> customerId a == searchId) getCustomers
+getCustomerById :: Int -> IO (Maybe Customer)
+getCustomerById searchId = do
+    maybeHead . filter (\a -> customerId a == searchId) <$> getCustomers
 
-getCustomers :: [Customer]
-getCustomers = customers
+getCustomers :: IO [Customer]
+getCustomers = do
+    customersFile <- readEntityFields "Customers"
+    return (map readEntity customersFile)

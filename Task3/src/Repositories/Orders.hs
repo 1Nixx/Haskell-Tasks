@@ -4,14 +4,17 @@ module Repositories.Orders
     , getOrdersByCustomerId) where
 
 import Data.Entities(Order(..))
-import Data.Context (orders)
 import Utils.Utils (maybeHead)
+import Utils.Files (readEntityFields)
+import Data.Converters.OrderConverter (readEntity)
 
-getOrderById :: Int -> Maybe Order
-getOrderById searchId = maybeHead $ filter (\a -> orderId a == searchId) getOrders
+getOrderById :: Int -> IO (Maybe Order)
+getOrderById searchId = maybeHead . filter (\a -> orderId a == searchId) <$> getOrders
 
-getOrders :: [Order]
-getOrders = orders
+getOrders :: IO [Order]
+getOrders = do
+    ordersFile <- readEntityFields "Orders"
+    return (map readEntity ordersFile)
 
-getOrdersByCustomerId :: Int -> [Order]
-getOrdersByCustomerId custId = filter (\ a -> orderCustomerId a == custId) getOrders
+getOrdersByCustomerId :: Int -> IO [Order]
+getOrdersByCustomerId custId = filter (\ a -> orderCustomerId a == custId) <$> getOrders

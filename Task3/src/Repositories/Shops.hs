@@ -1,14 +1,17 @@
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Repositories.Shops 
     ( getShopById
     , getShops) where
 
 import Data.Entities (Shop(..))
-import Data.Context (shops)
 import Utils.Utils (maybeHead)
+import Utils.Files (readEntityFields)
+import Data.Converters.ShopConverter (readEntity)
 
-getShopById :: Int -> Maybe Shop
-getShopById searchId = maybeHead $ filter (\a -> shopId a == searchId) getShops
+getShopById :: Int -> IO (Maybe Shop)
+getShopById searchId = do 
+    maybeHead . filter (\a -> shopId a == searchId) <$> getShops
 
-getShops :: [Shop]
-getShops = shops
+getShops :: IO [Shop]
+getShops = do
+    shopsFile <- readEntityFields "Shops"
+    return (map readEntity shopsFile)

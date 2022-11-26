@@ -1,6 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
+module Data.Converters.ProductConverter 
+    (readEntity) where
+
 import Data.Entities (Product(..), productId, productShopId, productName, productPrice, productColor)
 import Data.CommonEntity (Color)
 

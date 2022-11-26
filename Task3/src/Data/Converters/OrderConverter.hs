@@ -1,6 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
+module Data.Converters.OrderConverter 
+    (readEntity) where
+
 import Data.Entities (Order(..))
 
 instance Show Order where   
