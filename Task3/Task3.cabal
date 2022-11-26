@@ -27,6 +27,11 @@ library
   exposed-modules:
       Data.CommonEntity
       Data.Context
+      Data.Converters.CustomerConverter
+      Data.Converters.OrderConverter
+      Data.Converters.ProductConverter
+      Data.Converters.ProductOrderConverter
+      Data.Converters.ShopConverter
       Data.Entities
       Data.Models
       Mappings.Mappings
