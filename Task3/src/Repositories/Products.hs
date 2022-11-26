@@ -5,7 +5,7 @@ module Repositories.Products
     , getProductsByShopId
     , getProductsWithOrdersId) where
 
-import Data.Entities (Product(..), productId, productShopId, ProductOrder (..), Order(..))
+import Data.Entities (Product(..), productId, productShopId, ProductOrder (..), Order(..), productName, productPrice, productColor)
 import Data.Context (products, productOrders)
 import Utils.Utils (maybeHead)
 import Data.Maybe (fromJust)
@@ -27,3 +27,6 @@ getProductsWithOrdersId :: [(Int, [Product])]
 getProductsWithOrdersId = 
     let orderIds = getOrders
     in map (\x -> (orderId x, getProductsByOrderId $ orderId x)) orderIds
+
+toWrite :: Product -> String
+toWrite pd = show (productId pd) ++ "|" ++ show (productShopId pd) ++ "|" ++ productName pd ++ "|" ++ show (productPrice pd) ++ "|" ++ show (productColor pd)

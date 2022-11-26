@@ -38,6 +38,7 @@ library
       Services.Orders
       Services.Products
       Services.Shops
+      Utils.Files
       Utils.Utils
   other-modules:
       Paths_Task3
@@ -46,6 +47,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , text
   default-language: Haskell2010
 
 executable Task3-exe
@@ -58,6 +60,7 @@ executable Task3-exe
   build-depends:
       Task3
     , base >=4.7 && <5
+    , text
   default-language: Haskell2010
 
 test-suite Task3-test
@@ -71,4 +74,5 @@ test-suite Task3-test
   build-depends:
       Task3
     , base >=4.7 && <5
+    , text
   default-language: Haskell2010

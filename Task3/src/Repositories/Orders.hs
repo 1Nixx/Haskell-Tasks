@@ -15,3 +15,6 @@ getOrders = orders
 
 getOrdersByCustomerId :: Int -> [Order]
 getOrdersByCustomerId custId = filter (\ a -> orderCustomerId a == custId) getOrders
+
+toWrite :: Order -> String
+toWrite ord = show (orderId ord) ++ "|" ++ show (orderCustomerId ord) ++ "|" ++ orderNumber ord

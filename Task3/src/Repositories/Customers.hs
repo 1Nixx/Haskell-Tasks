@@ -1,4 +1,4 @@
-module Repositories.Customers 
+module Repositories.Customers
     ( getCustomerById
     , getCustomers) where
 
@@ -11,3 +11,6 @@ getCustomerById searchId = maybeHead $ filter (\a -> customerId a == searchId) g
 
 getCustomers :: [Customer]
 getCustomers = customers
+
+toWrite :: Customer -> String
+toWrite cs = show (customerId cs) ++ "|" ++ customerName cs ++ "|" ++ customerAddress cs
