@@ -4,13 +4,14 @@ module Repositories.Products
     , getProducts
     , getProductsByOrderId
     , getProductsByShopId
-    , getProductsWithOrdersId) where
+    , getProductsWithOrdersId
+    , addProduct) where
 
-import Data.Entities (Product(..), productId, productShopId, ProductOrder (..), Order(..))
+import Data.Entities (Product(..), productId, productShopId, ProductOrder (..), Order(..), productName, productPrice, productColor)
 import Utils.Utils (maybeHead)
 import Data.Maybe (fromJust)
 import Repositories.Orders (getOrders)
-import Utils.Files (readEntityFields)
+import Utils.Files (readEntityFields, addLine)
 import qualified Data.Converters.ProductConverter as PC
 import qualified Data.Converters.ProductOrderConverter as POC
 
@@ -41,3 +42,14 @@ getProductsWithOrdersId = do
             let orderid = orderId ord
             products <- getProductsByOrderId orderid
             return (orderid, products)
+
+addProduct :: Product -> IO Int
+addProduct prod = do
+    oldProducts <- getProducts
+    let prodId = getProductUnicId oldProducts
+    let newProd = Product prodId (productShopId prod) (productName prod) (productPrice prod) (productColor prod)
+    addLine "Products" (show newProd)
+    return prodId
+
+getProductUnicId :: [Product] -> Int
+getProductUnicId xs = productId (last xs) + 1
