@@ -45,7 +45,7 @@ replaceLine entityName line lineInd = do
     addLine entityName line
 
 fileName :: String -> String
-fileName entityName = "C:\\Users\\hripa\\Desktop\\Work\\Haskell-Tasks\\Task3/src/Files/" ++ entityName ++ ".txt"
+fileName entityName = "src/Files/" ++ entityName ++ ".txt"
 
 removeAt :: Int -> [a] -> [a]
 removeAt pos xs'@(x:xs)
