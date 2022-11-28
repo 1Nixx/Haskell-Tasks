@@ -7,15 +7,17 @@ module Repositories.Products
     , getProductsByShopId
     , getProductsWithOrdersId
     , addProduct
-    , addProductOrder) where
+    , addProductOrder
+    , editProduct) where
 
 import Data.Entities (Product(..), productId, productShopId, ProductOrder (..), Order(..), productName, productPrice, productColor)
 import Utils.Utils (maybeHead)
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, fromMaybe)
 import Repositories.Orders (getOrders)
-import Utils.Files (readEntityFields, addLine)
+import Utils.Files (readEntityFields, addLine, replaceLine)
 import qualified Data.Converters.ProductConverter as PC
 import qualified Data.Converters.ProductOrderConverter as POC
+import Data.List (findIndex)
 
 getProductById :: Int -> IO(Maybe Product)
 getProductById searchId = maybeHead . filter (\a -> productId a == searchId) <$> getProducts
@@ -67,3 +69,13 @@ addProductOrder po = do
 
 getPOUnicId :: [ProductOrder] -> Int
 getPOUnicId xs = productOrderId (last xs) + 1
+
+editProduct :: Product -> IO ()
+editProduct prod = do
+    oldProducts <- getProducts
+    let lineId = getListId (productId prod) oldProducts 
+    replaceLine "Products" (show prod) (fromMaybe (-1) lineId)
+    return()
+
+getListId :: Int -> [Product] -> Maybe Int
+getListId prodId = findIndex (\x -> productId x == prodId) 

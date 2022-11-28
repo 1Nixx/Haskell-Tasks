@@ -1,14 +1,15 @@
-{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
-
 module Repositories.Customers
     ( getCustomerById
     , getCustomers
-    , addCustomer) where
+    , addCustomer
+    , editCustomer) where
 
 import Data.Entities (Customer(..))
 import Utils.Utils (maybeHead)
-import Utils.Files (readEntityFields, addLine)
+import Utils.Files (readEntityFields, addLine, replaceLine)
 import Data.Converters.CustomerConverter (readEntity)
+import Data.List (findIndex)
+import Data.Maybe (fromMaybe)
 
 getCustomerById :: Int -> IO (Maybe Customer)
 getCustomerById searchId = do
@@ -29,3 +30,14 @@ addCustomer cust = do
 
 getCustUnicId :: [Customer] -> Int
 getCustUnicId xs = customerId (last xs) + 1  
+
+editCustomer :: Customer -> IO ()
+editCustomer cust = do
+    oldCustomers <- getCustomers
+    let lineId = getListId (customerId cust) oldCustomers 
+    replaceLine "Customers" (show cust) (fromMaybe (-1) lineId)
+    return()
+
+getListId :: Int -> [Customer] -> Maybe Int
+getListId custId = findIndex (\x -> customerId x == custId) 
+    

@@ -3,7 +3,8 @@
 module Services.Orders
     ( getOrders
     , getOrder
-    , addOrder) where
+    , addOrder
+    , editOrder) where
 
 import Data.Models (OrderModel(..), ProductModel)
 import qualified Repositories.Orders as OrderRep
@@ -37,3 +38,8 @@ addProductOrders maybePM ordId =
     case maybePM of
         Nothing -> return()
         Just prodModel -> mapM_ (ProdRep.addProductOrder . mapModelToProductOrder ordId) prodModel
+
+editOrder :: OrderModel -> IO ()
+editOrder order = 
+    let order' = mapModelToOrder order     
+    in OrderRep.editOrder order'

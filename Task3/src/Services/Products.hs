@@ -1,7 +1,8 @@
 module Services.Products
     ( getProducts
     , getProduct
-    , addProduct) where
+    , addProduct
+    , editProduct) where
 
 import Data.Models (ProductModel)
 import Data.Entities (productShopId)
@@ -25,3 +26,8 @@ addProduct :: ProductModel -> IO Int
 addProduct prod = 
     let prod' = mapModelToProduct prod     
     in ProductRep.addProduct prod' 
+
+editProduct :: ProductModel -> IO ()
+editProduct prod = 
+    let prod' = mapModelToProduct prod     
+    in ProductRep.editProduct prod' 

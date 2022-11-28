@@ -1,7 +1,8 @@
 module Services.Customer
     ( getCustomers
     , getCustomer
-    , addCustomer) where
+    , addCustomer
+    , editCustomer) where
 
 import Data.Models (CustomerModel)
 import qualified Repositories.Customers as CustomerRep
@@ -25,3 +26,8 @@ addCustomer :: CustomerModel -> IO Int
 addCustomer customer = 
     let customer' = mapModelToCutomer customer     
     in CustomerRep.addCustomer customer'
+
+editCustomer :: CustomerModel -> IO ()
+editCustomer customer = 
+    let customer' = mapModelToCutomer customer     
+    in CustomerRep.editCustomer customer'

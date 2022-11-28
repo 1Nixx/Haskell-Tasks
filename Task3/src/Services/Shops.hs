@@ -1,7 +1,8 @@
 module Services.Shops
     ( getShops
     , getShop
-    , addShop) where
+    , addShop
+    , editShop) where
 
 import Data.Models (ShopModel)
 import Mappings.Mappings (mapShopToModel, mapModelToShop)
@@ -24,3 +25,8 @@ addShop :: ShopModel -> IO Int
 addShop shop = 
     let shop' = mapModelToShop shop     
     in ShopRep.addShop shop'
+
+editShop :: ShopModel -> IO ()
+editShop shop = 
+    let shop' = mapModelToShop shop     
+    in ShopRep.editShop shop'

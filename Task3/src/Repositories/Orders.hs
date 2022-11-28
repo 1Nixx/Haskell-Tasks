@@ -2,12 +2,15 @@ module Repositories.Orders
     ( getOrderById
     , getOrders
     , getOrdersByCustomerId
-    , addOrder) where
+    , addOrder
+    , editOrder) where
 
 import Data.Entities(Order(..))
 import Utils.Utils (maybeHead)
-import Utils.Files (readEntityFields, addLine)
+import Utils.Files (readEntityFields, addLine, replaceLine)
 import Data.Converters.OrderConverter (readEntity)
+import Data.List (findIndex)
+import Data.Maybe (fromMaybe)
 
 getOrderById :: Int -> IO (Maybe Order)
 getOrderById searchId = maybeHead . filter (\a -> orderId a == searchId) <$> getOrders
@@ -30,3 +33,13 @@ addOrder ord = do
 
 getOrderUnicId :: [Order] -> Int
 getOrderUnicId xs = orderId (last xs) + 1  
+
+editOrder :: Order -> IO ()
+editOrder ord = do
+    oldOrders <- getOrders
+    let lineId = getListId (orderId ord) oldOrders 
+    replaceLine "Orders" (show ord) (fromMaybe (-1) lineId)
+    return()
+
+getListId :: Int -> [Order] -> Maybe Int
+getListId ordId = findIndex (\x -> orderId x == ordId) 
