@@ -4,44 +4,44 @@ import System.IO
     ( hClose, hGetContents, openFile, IOMode(ReadMode) )
 import qualified Data.Text as Text
 
-readEntityFile :: String -> IO String
-readEntityFile entityName = do
+readEntityFromFile :: String -> IO String
+readEntityFromFile entityName = do
     input <- openFile (fileName entityName) ReadMode
     text <- hGetContents input
     putStrLn text
     hClose input
     return text
 
-writeEntityFile :: String -> String -> IO ()
-writeEntityFile entityName text = do
+writeEntityToFile :: String -> String -> IO ()
+writeEntityToFile entityName text = do
     writeFile (fileName entityName) text
 
 readEntityFields :: String -> IO [[String]]
 readEntityFields entityName = do
-    text <- readEntityFile entityName
+    text <- readEntityFromFile entityName
     let splitByFields = map (map Text.unpack . Text.split (=='|') . Text.pack ) (lines text)
     return splitByFields
 
 deleteLine :: String -> Int -> IO ()
 deleteLine entityName lineInd = do
-    text <- readEntityFile entityName
+    text <- readEntityFromFile entityName
     let rows = lines text
     let resultRows = unlines $ removeAt lineInd rows
-    writeEntityFile entityName resultRows
+    writeEntityToFile entityName resultRows
 
 addLine :: String -> String -> IO ()
 addLine entityName line = do
-    text <- readEntityFile entityName
+    text <- readEntityFromFile entityName
     let rows = lines text
     let resultRows = unlines (rows ++ [line])
-    writeEntityFile entityName resultRows
+    writeEntityToFile entityName resultRows
 
 replaceLine :: String -> String -> Int -> IO ()
 replaceLine entityName line lineInd = do
-    text <- readEntityFile entityName
+    text <- readEntityFromFile entityName
     let rows = lines text
     let resultRows = unlines $ replaceAt lineInd line rows
-    writeEntityFile entityName resultRows
+    writeEntityToFile entityName resultRows
 
 fileName :: String -> String
 fileName entityName = "src/Files/" ++ entityName ++ ".txt"
