@@ -2,7 +2,8 @@ module Services.Customer
     ( getCustomers
     , getCustomer
     , addCustomer
-    , editCustomer) where
+    , editCustomer
+    , deleteCustomer) where
 
 import Data.Models (CustomerModel)
 import qualified Repositories.Customers as CustomerRep
@@ -31,3 +32,6 @@ editCustomer :: CustomerModel -> IO ()
 editCustomer customer = 
     let customer' = mapModelToCutomer customer     
     in CustomerRep.editCustomer customer'
+
+deleteCustomer :: Int -> IO ()
+deleteCustomer = CustomerRep.deleteCustomer

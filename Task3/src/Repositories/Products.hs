@@ -8,13 +8,14 @@ module Repositories.Products
     , getProductsWithOrdersId
     , addProduct
     , addProductOrder
-    , editProduct) where
+    , editProduct
+    , deleteProduct) where
 
 import Data.Entities (Product(..), productId, productShopId, ProductOrder (..), Order(..), productName, productPrice, productColor)
 import Utils.Utils (maybeHead)
 import Data.Maybe (fromJust, fromMaybe)
 import Repositories.Orders (getOrders)
-import Utils.Files (readEntityFields, addLine, replaceLine)
+import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
 import qualified Data.Converters.ProductConverter as PC
 import qualified Data.Converters.ProductOrderConverter as POC
 import Data.List (findIndex)
@@ -79,3 +80,10 @@ editProduct prod = do
 
 getListId :: Int -> [Product] -> Maybe Int
 getListId prodId = findIndex (\x -> productId x == prodId) 
+
+deleteProduct :: Int -> IO ()
+deleteProduct prodId = do
+    oldProducts <- getProducts
+    let lineId = getListId prodId oldProducts 
+    deleteLine "Products" (fromMaybe (-1) lineId)
+    return()

@@ -4,7 +4,8 @@ module Services.Orders
     ( getOrders
     , getOrder
     , addOrder
-    , editOrder) where
+    , editOrder
+    , deleteOrder) where
 
 import Data.Models (OrderModel(..), ProductModel)
 import qualified Repositories.Orders as OrderRep
@@ -43,3 +44,6 @@ editOrder :: OrderModel -> IO ()
 editOrder order = 
     let order' = mapModelToOrder order     
     in OrderRep.editOrder order'
+
+deleteOrder :: Int -> IO ()
+deleteOrder = OrderRep.deleteOrder

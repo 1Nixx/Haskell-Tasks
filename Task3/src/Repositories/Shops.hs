@@ -2,11 +2,12 @@ module Repositories.Shops
     ( getShopById
     , getShops
     , addShop
-    , editShop) where
+    , editShop
+    , deleteShop) where
 
 import Data.Entities (Shop(..))
 import Utils.Utils (maybeHead)
-import Utils.Files (readEntityFields, addLine, replaceLine)
+import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
 import Data.Converters.ShopConverter (readEntity)
 import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
@@ -40,3 +41,10 @@ editShop sp = do
 
 getListId :: Int -> [Shop] -> Maybe Int
 getListId spId = findIndex (\x -> shopId x == spId) 
+
+deleteShop :: Int -> IO ()
+deleteShop spId = do
+    oldShops <- getShops
+    let lineId = getListId spId oldShops 
+    deleteLine "Shops" (fromMaybe (-1) lineId)
+    return()

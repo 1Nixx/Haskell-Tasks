@@ -2,7 +2,8 @@ module Services.Shops
     ( getShops
     , getShop
     , addShop
-    , editShop) where
+    , editShop
+    , deleteShop) where
 
 import Data.Models (ShopModel)
 import Mappings.Mappings (mapShopToModel, mapModelToShop)
@@ -30,3 +31,6 @@ editShop :: ShopModel -> IO ()
 editShop shop = 
     let shop' = mapModelToShop shop     
     in ShopRep.editShop shop'
+
+deleteShop :: Int -> IO ()
+deleteShop = ShopRep.deleteShop

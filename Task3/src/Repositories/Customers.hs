@@ -2,11 +2,12 @@ module Repositories.Customers
     ( getCustomerById
     , getCustomers
     , addCustomer
-    , editCustomer) where
+    , editCustomer
+    , deleteCustomer) where
 
 import Data.Entities (Customer(..))
 import Utils.Utils (maybeHead)
-import Utils.Files (readEntityFields, addLine, replaceLine)
+import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
 import Data.Converters.CustomerConverter (readEntity)
 import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
@@ -40,4 +41,11 @@ editCustomer cust = do
 
 getListId :: Int -> [Customer] -> Maybe Int
 getListId custId = findIndex (\x -> customerId x == custId) 
+
+deleteCustomer :: Int -> IO ()
+deleteCustomer custId = do
+    oldCustomers <- getCustomers
+    let lineId = getListId custId oldCustomers 
+    deleteLine "Customers" (fromMaybe (-1) lineId)
+    return()
     

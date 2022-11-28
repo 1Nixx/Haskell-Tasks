@@ -3,11 +3,12 @@ module Repositories.Orders
     , getOrders
     , getOrdersByCustomerId
     , addOrder
-    , editOrder) where
+    , editOrder
+    , deleteOrder) where
 
 import Data.Entities(Order(..))
 import Utils.Utils (maybeHead)
-import Utils.Files (readEntityFields, addLine, replaceLine)
+import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
 import Data.Converters.OrderConverter (readEntity)
 import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
@@ -43,3 +44,11 @@ editOrder ord = do
 
 getListId :: Int -> [Order] -> Maybe Int
 getListId ordId = findIndex (\x -> orderId x == ordId) 
+
+deleteOrder :: Int -> IO ()
+deleteOrder ordId = do
+    oldOrders <- getOrders
+    let lineId = getListId ordId oldOrders 
+    deleteLine "Orders" (fromMaybe (-1) lineId)
+    return()
+    
