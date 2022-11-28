@@ -14,7 +14,9 @@ import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
 
 getOrderById :: Int -> IO (Maybe Order)
-getOrderById searchId = maybeHead . filter (\a -> orderId a == searchId) <$> getOrders
+getOrderById searchId = do 
+    ords <- getOrders
+    return $ maybeHead $ filter (\a -> orderId a == searchId) ords
 
 getOrders :: IO [Order]
 getOrders = do
@@ -22,7 +24,9 @@ getOrders = do
     return (map readEntity ordersFile)
 
 getOrdersByCustomerId :: Int -> IO [Order]
-getOrdersByCustomerId custId = filter (\ a -> orderCustomerId a == custId) <$> getOrders
+getOrdersByCustomerId custId = do 
+    ords <- getOrders
+    return $ filter (\ a -> orderCustomerId a == custId) ords
 
 addOrder :: Order -> IO Int
 addOrder ord = do

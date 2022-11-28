@@ -14,7 +14,8 @@ import Data.Maybe (fromMaybe)
 
 getShopById :: Int -> IO (Maybe Shop)
 getShopById searchId = do 
-    maybeHead . filter (\a -> shopId a == searchId) <$> getShops
+    shps <- getShops
+    return $ maybeHead $ filter (\a -> shopId a == searchId) shps
 
 getShops :: IO [Shop]
 getShops = do

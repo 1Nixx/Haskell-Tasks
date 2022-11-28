@@ -7,15 +7,17 @@ module Services.Orders
     , editOrder
     , deleteOrder) where
 
-import Data.Models (OrderModel(..), ProductModel)
+import Data.Models (OrderModel(..))
 import qualified Repositories.Orders as OrderRep
 import qualified Repositories.Customers as CustRep
 import qualified Repositories.Products as ProdRep
-import Mappings.Mappings (mapOrderToModel, mapModelToOrder, mapModelToProductOrder)
+import Mappings.Mappings (mapOrderToModel, mapModelToOrder)
 import Data.Entities (Order(orderCustomerId, orderId))
 
 getOrders :: IO [OrderModel]
-getOrders = map (\ o -> mapOrderToModel o Nothing Nothing) <$> OrderRep.getOrders
+getOrders = do
+    ords <- OrderRep.getOrders
+    return (map (\ o -> mapOrderToModel o Nothing Nothing) ords)
 
 getOrder :: Int -> IO (Maybe OrderModel)
 getOrder ordId = do
@@ -28,17 +30,9 @@ getOrder ordId = do
             return $ Just $ mapOrderToModel value maybeCustomer (Just products)
 
 addOrder :: OrderModel -> IO Int
-addOrder ord = do
+addOrder ord = 
     let order' = mapModelToOrder ord
-    ordId <- OrderRep.addOrder order'
-    addProductOrders (orderModelProducts ord) ordId
-    return ordId
-
-addProductOrders :: Maybe [ProductModel] -> Int -> IO ()
-addProductOrders maybePM ordId = 
-    case maybePM of
-        Nothing -> return()
-        Just prodModel -> mapM_ (ProdRep.addProductOrder . mapModelToProductOrder ordId) prodModel
+    in OrderRep.addOrder order'
 
 editOrder :: OrderModel -> IO ()
 editOrder order = 

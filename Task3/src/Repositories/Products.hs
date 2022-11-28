@@ -7,7 +7,6 @@ module Repositories.Products
     , getProductsByShopId
     , getProductsWithOrdersId
     , addProduct
-    , addProductOrder
     , editProduct
     , deleteProduct) where
 
@@ -21,7 +20,9 @@ import qualified Data.Converters.ProductOrderConverter as POC
 import Data.List (findIndex)
 
 getProductById :: Int -> IO(Maybe Product)
-getProductById searchId = maybeHead . filter (\a -> productId a == searchId) <$> getProducts
+getProductById searchId = do 
+    prds <- getProducts
+    return $ maybeHead $ filter (\a -> productId a == searchId) prds 
 
 getProducts :: IO [Product]
 getProducts = do
@@ -35,7 +36,9 @@ getProductsByOrderId searchOrderId = do
     mapM (fmap fromJust . getProductById . prodFKId) $ filter (\ a -> orderFKId a == searchOrderId) productOrders
 
 getProductsByShopId :: Int -> IO [Product]
-getProductsByShopId searchShopId = filter (\ a -> productShopId a == searchShopId) <$> getProducts
+getProductsByShopId searchShopId = do
+    prds <- getProducts
+    return $ filter (\ a -> productShopId a == searchShopId) prds
 
 getProductsWithOrdersId :: IO [(Int, [Product])]
 getProductsWithOrdersId = do
@@ -58,18 +61,6 @@ addProduct prod = do
 
 getProductUnicId :: [Product] -> Int
 getProductUnicId xs = productId (last xs) + 1
-
-addProductOrder :: ProductOrder -> IO Int
-addProductOrder po = do 
-    productOrdersFile <- readEntityFields "ProductOrders"
-    let productOrders = map POC.readEntity productOrdersFile
-    let prodId = getPOUnicId productOrders
-    let newProd = po {productOrderId = prodId}
-    addLine "ProductOrders" (show newProd)
-    return prodId
-
-getPOUnicId :: [ProductOrder] -> Int
-getPOUnicId xs = productOrderId (last xs) + 1
 
 editProduct :: Product -> IO ()
 editProduct prod = do

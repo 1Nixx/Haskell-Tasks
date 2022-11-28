@@ -11,7 +11,9 @@ import qualified Repositories.Shops as ShopRep
 import qualified Repositories.Products as ProdRep
 
 getShops :: IO [ShopModel]
-getShops = map (`mapShopToModel` Nothing) <$> ShopRep.getShops
+getShops = do 
+    sps <- ShopRep.getShops
+    return $ map (`mapShopToModel` Nothing) sps 
 
 getShop :: Int -> IO (Maybe ShopModel)
 getShop shopId = do

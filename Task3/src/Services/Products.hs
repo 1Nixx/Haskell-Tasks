@@ -12,7 +12,9 @@ import qualified Repositories.Shops as ShopRep
 import Mappings.Mappings (mapProductToModel, mapModelToProduct)
 
 getProducts :: IO [ProductModel]
-getProducts = map (`mapProductToModel` Nothing) <$> ProductRep.getProducts
+getProducts = do
+    prds <- ProductRep.getProducts
+    return $ map (`mapProductToModel` Nothing) prds 
 
 getProduct :: Int -> IO (Maybe ProductModel)
 getProduct prodId = do

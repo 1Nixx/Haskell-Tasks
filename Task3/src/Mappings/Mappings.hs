@@ -6,8 +6,7 @@ module Mappings.Mappings
     , mapModelToCutomer
     , mapModelToShop
     , mapModelToProduct
-    , mapModelToOrder
-    , mapModelToProductOrder) where
+    , mapModelToOrder) where
 
 import Data.Entities
     ( Product(..)
@@ -17,7 +16,7 @@ import Data.Entities
     , productName
     , productPrice
     , productColor
-    , Customer(..), ProductOrder(..))
+    , Customer(..))
 import Data.Models (ProductModel(..), ShopModel(..), OrderModel(..), CustomerModel (..), productModelShop, productModelId, productModelName, productModelPrice, productModelColor)
 import Utils.Utils (maybeHead)
 import Data.Maybe (fromMaybe)
@@ -98,13 +97,4 @@ mapModelToOrder orderModel =
             orderId = orderModelId orderModel,
             orderCustomerId = fromMaybe (-1) ordId,
             orderNumber = orderModelNumber orderModel
-        }
-
-mapModelToProductOrder ::  Int -> ProductModel -> ProductOrder
-mapModelToProductOrder ordId productModel = 
-    let prodId = productModelId productModel
-    in ProductOrder {
-            productOrderId = -1,
-            orderFKId = ordId,
-            prodFKId = prodId
         }

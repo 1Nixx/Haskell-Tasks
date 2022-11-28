@@ -12,7 +12,9 @@ import qualified Repositories.Products as ProductRep
 import Mappings.Mappings (mapCustomerToModel, mapModelToCutomer)
 
 getCustomers :: IO [CustomerModel]
-getCustomers = map (\o -> mapCustomerToModel o Nothing Nothing) <$> CustomerRep.getCustomers
+getCustomers = do
+    csts <- CustomerRep.getCustomers 
+    return (map (\o -> mapCustomerToModel o Nothing Nothing) csts)
 
 getCustomer :: Int -> IO (Maybe CustomerModel)
 getCustomer custId = do
@@ -21,7 +23,8 @@ getCustomer custId = do
         Nothing -> return Nothing
         Just value -> do
             orders <- OrderRep.getOrdersByCustomerId custId
-            Just . mapCustomerToModel value (Just orders) . Just <$> ProductRep.getProductsWithOrdersId
+            prodWithIds <- ProductRep.getProductsWithOrdersId
+            return (Just . mapCustomerToModel value (Just orders) . Just $ prodWithIds)
 
 addCustomer :: CustomerModel -> IO Int
 addCustomer customer = 

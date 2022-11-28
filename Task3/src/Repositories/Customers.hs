@@ -14,7 +14,8 @@ import Data.Maybe (fromMaybe)
 
 getCustomerById :: Int -> IO (Maybe Customer)
 getCustomerById searchId = do
-    maybeHead . filter (\a -> customerId a == searchId) <$> getCustomers
+    cstmrs <- getCustomers
+    return $ maybeHead $ filter (\a -> customerId a == searchId) cstmrs
 
 getCustomers :: IO [Customer]
 getCustomers = do
