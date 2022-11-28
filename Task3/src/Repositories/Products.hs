@@ -1,11 +1,13 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# OPTIONS_GHC -Wno-missing-fields #-}
 module Repositories.Products
     ( getProductById
     , getProducts
     , getProductsByOrderId
     , getProductsByShopId
     , getProductsWithOrdersId
-    , addProduct) where
+    , addProduct
+    , addProductOrder) where
 
 import Data.Entities (Product(..), productId, productShopId, ProductOrder (..), Order(..), productName, productPrice, productColor)
 import Utils.Utils (maybeHead)
@@ -53,3 +55,15 @@ addProduct prod = do
 
 getProductUnicId :: [Product] -> Int
 getProductUnicId xs = productId (last xs) + 1
+
+addProductOrder :: ProductOrder -> IO Int
+addProductOrder po = do 
+    productOrdersFile <- readEntityFields "ProductOrders"
+    let productOrders = map POC.readEntity productOrdersFile
+    let prodId = getPOUnicId productOrders
+    let newProd = po {productOrderId = prodId}
+    addLine "ProductOrders" (show newProd)
+    return prodId
+
+getPOUnicId :: [ProductOrder] -> Int
+getPOUnicId xs = productOrderId (last xs) + 1

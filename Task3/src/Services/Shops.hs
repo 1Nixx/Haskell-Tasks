@@ -1,9 +1,10 @@
 module Services.Shops
     ( getShops
-    , getShop) where
+    , getShop
+    , addShop) where
 
 import Data.Models (ShopModel)
-import Mappings.Mappings (mapShopToModel)
+import Mappings.Mappings (mapShopToModel, mapModelToShop)
 import qualified Repositories.Shops as ShopRep
 import qualified Repositories.Products as ProdRep
 
@@ -18,3 +19,8 @@ getShop shopId = do
         Just value -> do
             prodList <- ProdRep.getProductsByShopId shopId
             return $ Just $ mapShopToModel value (Just prodList)
+
+addShop :: ShopModel -> IO Int
+addShop shop = 
+    let shop' = mapModelToShop shop     
+    in ShopRep.addShop shop'

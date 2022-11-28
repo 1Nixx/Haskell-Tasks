@@ -2,7 +2,12 @@ module Mappings.Mappings
     ( mapProductToModel
     , mapOrderToModel
     , mapCustomerToModel
-    , mapShopToModel) where
+    , mapShopToModel
+    , mapModelToCutomer
+    , mapModelToShop
+    , mapModelToProduct
+    , mapModelToOrder
+    , mapModelToProductOrder) where
 
 import Data.Entities
     ( Product(..)
@@ -12,9 +17,10 @@ import Data.Entities
     , productName
     , productPrice
     , productColor
-    , Customer(..))
-import Data.Models (ProductModel(..), ShopModel(..), OrderModel(..), CustomerModel (..))
+    , Customer(..), ProductOrder(..))
+import Data.Models (ProductModel(..), ShopModel(..), OrderModel(..), CustomerModel (..), productModelShop, productModelId, productModelName, productModelPrice, productModelColor)
 import Utils.Utils (maybeHead)
+import Data.Maybe (fromMaybe)
 
 mapProductToModel :: Product -> Maybe Shop -> ProductModel
 mapProductToModel prod maybeShop =
@@ -65,3 +71,40 @@ mapShopToModel sp maybeProduct =
         shopModelAddress = shopAddress sp,
         shopModelProducts = productModelList
     }
+
+mapModelToCutomer :: CustomerModel -> Customer
+mapModelToCutomer customerModel = Customer {
+        customerId = customerModelId customerModel,
+        customerName = customerModelName customerModel,
+        customerAddress = customerModelAddress customerModel
+    }
+
+mapModelToShop :: ShopModel -> Shop
+mapModelToShop shopModel = Shop {
+        shopId = shopModelId shopModel,
+        shopName = shopModelName shopModel,
+        shopAddress = shopModelAddress shopModel
+    }
+
+mapModelToProduct :: ProductModel -> Product
+mapModelToProduct productModel =
+    let spId = shopModelId <$> productModelShop productModel
+    in Product (productModelId productModel) (fromMaybe (-1) spId) (productModelName productModel) (productModelPrice productModel) (productModelColor productModel)
+
+mapModelToOrder :: OrderModel -> Order
+mapModelToOrder orderModel =
+    let ordId = customerModelId <$> orderModelCustomer orderModel
+    in Order {
+            orderId = orderModelId orderModel,
+            orderCustomerId = fromMaybe (-1) ordId,
+            orderNumber = orderModelNumber orderModel
+        }
+
+mapModelToProductOrder ::  Int -> ProductModel -> ProductOrder
+mapModelToProductOrder ordId productModel = 
+    let prodId = productModelId productModel
+    in ProductOrder {
+            productOrderId = -1,
+            orderFKId = ordId,
+            prodFKId = prodId
+        }

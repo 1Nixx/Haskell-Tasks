@@ -1,12 +1,13 @@
 module Services.Customer
     ( getCustomers
-    , getCustomer) where
+    , getCustomer
+    , addCustomer) where
 
 import Data.Models (CustomerModel)
 import qualified Repositories.Customers as CustomerRep
 import qualified Repositories.Orders as OrderRep
 import qualified Repositories.Products as ProductRep
-import Mappings.Mappings (mapCustomerToModel)
+import Mappings.Mappings (mapCustomerToModel, mapModelToCutomer)
 
 getCustomers :: IO [CustomerModel]
 getCustomers = map (\o -> mapCustomerToModel o Nothing Nothing) <$> CustomerRep.getCustomers
@@ -19,3 +20,8 @@ getCustomer custId = do
         Just value -> do
             orders <- OrderRep.getOrdersByCustomerId custId
             Just . mapCustomerToModel value (Just orders) . Just <$> ProductRep.getProductsWithOrdersId
+
+addCustomer :: CustomerModel -> IO Int
+addCustomer customer = 
+    let customer' = mapModelToCutomer customer     
+    in CustomerRep.addCustomer customer'
