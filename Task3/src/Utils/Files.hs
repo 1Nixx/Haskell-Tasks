@@ -40,9 +40,8 @@ replaceLine :: String -> String -> Int -> IO ()
 replaceLine entityName line lineInd = do
     text <- readEntityFile entityName
     let rows = lines text
-    let resultRows = unlines $ removeAt lineInd rows
+    let resultRows = unlines $ replaceAt lineInd line rows
     writeEntityFile entityName resultRows
-    addLine entityName line
 
 fileName :: String -> String
 fileName entityName = "src/Files/" ++ entityName ++ ".txt"
@@ -53,3 +52,10 @@ removeAt pos xs'@(x:xs)
   | pos == 0  = xs
   | otherwise = xs'
 removeAt _ [] = []
+
+replaceAt :: Int -> a -> [a] -> [a]
+replaceAt pos el xs'@(x:xs) 
+    | pos > 0   = x : replaceAt (pos - 1) el xs
+    | pos == 0  = el : xs
+    | otherwise = xs' 
+replaceAt _ _ [] = []  
