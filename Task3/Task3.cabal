@@ -39,6 +39,7 @@ library
       Repositories.Customers
       Repositories.Orders
       Repositories.Products
+      Repositories.Repository
       Repositories.Shops
       Services.Customer
       Services.Orders
