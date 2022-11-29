@@ -1,20 +1,40 @@
 module Services.Customer
     ( getCustomers
-    , getCustomer) where
+    , getCustomer
+    , addCustomer
+    , editCustomer
+    , deleteCustomer) where
 
 import Data.Models (CustomerModel)
 import qualified Repositories.Customers as CustomerRep
 import qualified Repositories.Orders as OrderRep
 import qualified Repositories.Products as ProductRep
-import Mappings.Mappings (mapCustomerToModel)
+import Mappings.Mappings (mapCustomerToModel, mapModelToCutomer)
 
-getCustomers :: [CustomerModel]
-getCustomers = map (\o -> mapCustomerToModel o Nothing Nothing) CustomerRep.getCustomers
+getCustomers :: IO [CustomerModel]
+getCustomers = do
+    csts <- CustomerRep.getCustomers 
+    return (map (\o -> mapCustomerToModel o Nothing Nothing) csts)
 
-getCustomer :: Int -> Maybe CustomerModel
-getCustomer custId =
-    let orders = Just $ OrderRep.getOrdersByCustomerId custId
-        customer = CustomerRep.getCustomerById custId
-    in case customer of
-        Nothing -> Nothing
-        Just value -> Just $ mapCustomerToModel value orders (Just ProductRep.getProductsWithOrdersId)
+getCustomer :: Int -> IO (Maybe CustomerModel)
+getCustomer custId = do
+    customer <- CustomerRep.getCustomerById custId
+    case customer of
+        Nothing -> return Nothing
+        Just value -> do
+            orders <- OrderRep.getOrdersByCustomerId custId
+            prodWithIds <- ProductRep.getProductsWithOrdersId
+            return (Just . mapCustomerToModel value (Just orders) . Just $ prodWithIds)
+
+addCustomer :: CustomerModel -> IO Int
+addCustomer customer = 
+    let customer' = mapModelToCutomer customer     
+    in CustomerRep.addCustomer customer'
+
+editCustomer :: CustomerModel -> IO ()
+editCustomer customer = 
+    let customer' = mapModelToCutomer customer     
+    in CustomerRep.editCustomer customer'
+
+deleteCustomer :: Int -> IO ()
+deleteCustomer = CustomerRep.deleteCustomer

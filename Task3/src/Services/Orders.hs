@@ -1,23 +1,43 @@
-module Services.Orders 
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use forM_" #-}
+module Services.Orders
     ( getOrders
-    , getOrder) where
-        
-import Data.Models (OrderModel)
+    , getOrder
+    , addOrder
+    , editOrder
+    , deleteOrder) where
+
+import Data.Models (OrderModel(..))
 import qualified Repositories.Orders as OrderRep
 import qualified Repositories.Customers as CustRep
 import qualified Repositories.Products as ProdRep
-import Mappings.Mappings (mapOrderToModel)
+import Mappings.Mappings (mapOrderToModel, mapModelToOrder)
 import Data.Entities (Order(orderCustomerId, orderId))
 
-getOrders :: [OrderModel]
-getOrders = map (\ o -> mapOrderToModel o Nothing Nothing) OrderRep.getOrders
+getOrders :: IO [OrderModel]
+getOrders = do
+    ords <- OrderRep.getOrders
+    return (map (\ o -> mapOrderToModel o Nothing Nothing) ords)
 
-getOrder :: Int -> Maybe OrderModel
-getOrder ordId = 
-    let orderRes = OrderRep.getOrderById ordId
-    in case orderRes of 
-        Nothing -> Nothing
-        Just value -> 
-            let maybeCustomer = CustRep.getCustomerById $ orderCustomerId value
-                maybeProducts = Just $ ProdRep.getProductsByOrderId $ orderId value
-            in Just $ mapOrderToModel value maybeCustomer maybeProducts
+getOrder :: Int -> IO (Maybe OrderModel)
+getOrder ordId = do
+    orderRes <- OrderRep.getOrderById ordId
+    case orderRes of
+        Nothing -> return Nothing
+        Just value -> do
+            maybeCustomer <- CustRep.getCustomerById $ orderCustomerId value
+            products <- ProdRep.getProductsByOrderId $ orderId value
+            return $ Just $ mapOrderToModel value maybeCustomer (Just products)
+
+addOrder :: OrderModel -> IO Int
+addOrder ord = 
+    let order' = mapModelToOrder ord
+    in OrderRep.addOrder order'
+
+editOrder :: OrderModel -> IO ()
+editOrder order = 
+    let order' = mapModelToOrder order     
+    in OrderRep.editOrder order'
+
+deleteOrder :: Int -> IO ()
+deleteOrder = OrderRep.deleteOrder
