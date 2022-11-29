@@ -15,8 +15,8 @@ import Utils.Utils (maybeHead)
 import Data.Maybe (fromJust, fromMaybe)
 import Repositories.Orders (getOrders)
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
-import qualified Data.Converters.ProductConverter as PC
-import qualified Data.Converters.ProductOrderConverter as POC
+import Data.Converters.ProductConverter (ReadEntity(..))
+import Data.Converters.ProductOrderConverter (ReadEntity(..))
 import Data.List (findIndex)
 
 getProductById :: Int -> IO(Maybe Product)
@@ -27,12 +27,12 @@ getProductById searchId = do
 getProducts :: IO [Product]
 getProducts = do
     productsFile <- readEntityFields "Products"
-    return (map PC.readEntity productsFile)
+    return (map readEntity productsFile)
 
 getProductsByOrderId :: Int -> IO [Product]
 getProductsByOrderId searchOrderId = do
     productOrdersFile <- readEntityFields "ProductOrders"
-    let productOrders = map POC.readEntity productOrdersFile
+    let productOrders = map readEntity productOrdersFile
     mapM (fmap fromJust . getProductById . prodFKId) $ filter (\ a -> orderFKId a == searchOrderId) productOrders
 
 getProductsByShopId :: Int -> IO [Product]

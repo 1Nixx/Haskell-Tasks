@@ -9,7 +9,7 @@ module Repositories.Orders
 import Data.Entities(Order(..))
 import Utils.Utils (maybeHead)
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
-import Data.Converters.OrderConverter (readEntity)
+import Data.Converters.OrderConverter (ReadEntity(..))
 import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
 

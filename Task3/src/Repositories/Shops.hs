@@ -8,7 +8,7 @@ module Repositories.Shops
 import Data.Entities (Shop(..))
 import Utils.Utils (maybeHead)
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
-import Data.Converters.ShopConverter (readEntity)
+import Data.Converters.ShopConverter (ReadEntity(..))
 import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
 

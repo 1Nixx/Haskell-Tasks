@@ -8,7 +8,7 @@ module Repositories.Customers
 import Data.Entities (Customer(..))
 import Utils.Utils (maybeHead)
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
-import Data.Converters.CustomerConverter (readEntity)
+import Data.Converters.CustomerConverter (ReadEntity(..))
 import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
 
