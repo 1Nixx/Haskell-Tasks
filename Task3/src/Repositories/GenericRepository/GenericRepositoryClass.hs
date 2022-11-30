@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE FlexibleInstances #-}
-module Repositories.Repository where
+module Repositories.GenericRepository.GenericRepositoryClass (GenericRepository(..)) where
 
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
 import Utils.Utils (maybeHead)
@@ -9,11 +9,12 @@ import Data.Maybe (fromMaybe)
 import Data.Converters.Converter
 import Data.RepositoryEntity.RepositoryEntity
 
-class (ReadWriteEntity a, RepositoryEntity a) => Repository a where
+class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
     getList :: IO [a]
     getList = do
             fileData <- readEntityFields entityName 
             return (map readEntity fileData)
+            
     get :: Int -> IO (Maybe a)
     get eid = do
         maybeHead . filter (\a -> entityId a == eid) <$> getList
@@ -23,14 +24,14 @@ class (ReadWriteEntity a, RepositoryEntity a) => Repository a where
         oldEntities <- getList
         let entId = getUnicId oldEntities
         let newEntity = changeEntityId entity entId
-        addLine entityName (show newEntity)
+        addLine entityName (writeEntity newEntity)
         return entId
 
     edit :: a -> IO ()
     edit entity = do
         oldEntities <- getList
         let lineId = getListId (entityId entity) oldEntities
-        replaceLine entityName (show entity) (fromMaybe (-1) lineId)
+        replaceLine entityName (writeEntity entity) (fromMaybe (-1) lineId)
         return()
 
     delete :: Int -> IO ()
