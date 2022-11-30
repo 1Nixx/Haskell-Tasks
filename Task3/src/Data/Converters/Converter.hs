@@ -1,5 +1,8 @@
-module Data.Converters.Converter (ReadEntity(..)) where
+module Data.Converters.Converter (ReadWriteEntity(..)) where
 
-class ReadEntity a where
-    readEntity :: [String] -> a
-
+import Data.Converters.ConverterClass
+import Data.Converters.CustomerConverter ()
+import Data.Converters.OrderConverter ()
+import Data.Converters.ProductConverter ()
+import Data.Converters.ProductOrderConverter ()
+import Data.Converters.ShopConverter ()

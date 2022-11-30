@@ -28,6 +28,7 @@ library
       Data.CommonEntity
       Data.Context
       Data.Converters.Converter
+      Data.Converters.ConverterClass
       Data.Converters.CustomerConverter
       Data.Converters.OrderConverter
       Data.Converters.ProductConverter

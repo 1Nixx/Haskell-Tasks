@@ -8,7 +8,7 @@ module Repositories.Shops
 import Data.Entities (Shop(..))
 import Utils.Utils (maybeHead)
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
-import Data.Converters.ShopConverter (ReadEntity(..))
+import Data.Converters.Converter
 import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
 
@@ -27,7 +27,7 @@ addShop sp = do
     oldShops <- getShops
     let spId = getShopUnicId oldShops
     let newSp = sp { shopId = spId }
-    addLine "Shops" (show newSp)
+    addLine "Shops" (writeEntity newSp)
     return spId
 
 getShopUnicId :: [Shop] -> Int
@@ -37,7 +37,7 @@ editShop :: Shop -> IO ()
 editShop sp = do
     oldShops <- getShops
     let lineId = getListId (shopId sp) oldShops 
-    replaceLine "Shops" (show sp) (fromMaybe (-1) lineId)
+    replaceLine "Shops" (writeEntity sp) (fromMaybe (-1) lineId)
     return()
 
 getListId :: Int -> [Shop] -> Maybe Int

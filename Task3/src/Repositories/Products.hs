@@ -15,8 +15,7 @@ import Utils.Utils (maybeHead)
 import Data.Maybe (fromJust, fromMaybe)
 import Repositories.Orders (getOrders)
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
-import Data.Converters.ProductConverter (ReadEntity(..))
-import Data.Converters.ProductOrderConverter (ReadEntity(..))
+import Data.Converters.Converter
 import Data.List (findIndex)
 
 getProductById :: Int -> IO(Maybe Product)
@@ -56,7 +55,7 @@ addProduct prod = do
     oldProducts <- getProducts
     let prodId = getProductUnicId oldProducts
     let newProd = Product prodId (productShopId prod) (productName prod) (productPrice prod) (productColor prod)
-    addLine "Products" (show newProd)
+    addLine "Products" (writeEntity newProd)
     return prodId
 
 getProductUnicId :: [Product] -> Int
@@ -66,7 +65,7 @@ editProduct :: Product -> IO ()
 editProduct prod = do
     oldProducts <- getProducts
     let lineId = getListId (productId prod) oldProducts 
-    replaceLine "Products" (show prod) (fromMaybe (-1) lineId)
+    replaceLine "Products" (writeEntity prod) (fromMaybe (-1) lineId)
     return()
 
 getListId :: Int -> [Product] -> Maybe Int

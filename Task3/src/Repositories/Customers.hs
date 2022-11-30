@@ -8,7 +8,7 @@ module Repositories.Customers
 import Data.Entities (Customer(..))
 import Utils.Utils (maybeHead)
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
-import Data.Converters.CustomerConverter (ReadEntity(..))
+import Data.Converters.Converter
 import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
 
@@ -27,7 +27,7 @@ addCustomer cust = do
     oldCustomers <- getCustomers
     let custId = getCustUnicId oldCustomers
     let newCust = cust { customerId = custId }
-    addLine "Customers" (show newCust)
+    addLine "Customers" (writeEntity newCust)
     return custId
 
 getCustUnicId :: [Customer] -> Int
@@ -37,7 +37,7 @@ editCustomer :: Customer -> IO ()
 editCustomer cust = do
     oldCustomers <- getCustomers
     let lineId = getListId (customerId cust) oldCustomers 
-    replaceLine "Customers" (show cust) (fromMaybe (-1) lineId)
+    replaceLine "Customers" (writeEntity cust) (fromMaybe (-1) lineId)
     return()
 
 getListId :: Int -> [Customer] -> Maybe Int

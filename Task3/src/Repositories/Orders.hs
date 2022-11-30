@@ -9,7 +9,7 @@ module Repositories.Orders
 import Data.Entities(Order(..))
 import Utils.Utils (maybeHead)
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
-import Data.Converters.OrderConverter (ReadEntity(..))
+import Data.Converters.Converter
 import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
 
@@ -33,7 +33,7 @@ addOrder ord = do
     oldOrders <- getOrders
     let ordId = getOrderUnicId oldOrders
     let newOrd = ord { orderId = ordId }
-    addLine "Orders" (show newOrd)
+    addLine "Orders" (writeEntity newOrd)
     return ordId
 
 getOrderUnicId :: [Order] -> Int
@@ -43,7 +43,7 @@ editOrder :: Order -> IO ()
 editOrder ord = do
     oldOrders <- getOrders
     let lineId = getListId (orderId ord) oldOrders 
-    replaceLine "Orders" (show ord) (fromMaybe (-1) lineId)
+    replaceLine "Orders" (writeEntity ord) (fromMaybe (-1) lineId)
     return()
 
 getListId :: Int -> [Order] -> Maybe Int
