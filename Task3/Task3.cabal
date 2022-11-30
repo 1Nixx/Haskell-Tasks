@@ -36,6 +36,13 @@ library
       Data.Converters.ShopConverter
       Data.Entities
       Data.Models
+      Data.RepositoryEntity.RepositoryCustomer
+      Data.RepositoryEntity.RepositoryEntity
+      Data.RepositoryEntity.RepositoryEntityClass
+      Data.RepositoryEntity.RepositoryOrder
+      Data.RepositoryEntity.RepositoryProduct
+      Data.RepositoryEntity.RepositoryProductOrder
+      Data.RepositoryEntity.RepositoryShop
       Mappings.Mappings
       Repositories.Customers
       Repositories.Orders
