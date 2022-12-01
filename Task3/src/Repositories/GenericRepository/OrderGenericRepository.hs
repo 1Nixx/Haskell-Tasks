@@ -3,5 +3,7 @@ module Repositories.GenericRepository.OrderGenericRepository () where
 
 import Data.Entities (Order(..))
 import Repositories.GenericRepository.GenericRepositoryClass
+import Data.RepositoryEntity.RepositoryEntity
 
-instance GenericRepository Order 
+instance GenericRepository Order where
+    getEntity = getInstance

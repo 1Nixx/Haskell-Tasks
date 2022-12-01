@@ -10,36 +10,37 @@ import Data.Converters.Converter
 import Data.RepositoryEntity.RepositoryEntity
 
 class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
-    getList :: IO [a]
-    getList = do
-            fileData <- readEntityFields entityName 
-            return (map readEntity fileData)
-            
-    get :: Int -> IO (Maybe a)
-    get eid = do
-        maybeHead . filter (\a -> entityId a == eid) <$> getList
+    getList :: a -> IO [a]
+    getList ent = do 
+        fileData <- readEntityFields (entityName ent)
+        return (map readEntity fileData)
+
+    get :: a -> Int -> IO (Maybe a)
+    get ent eid = do
+        maybeHead . filter (\a -> entityId a == eid) <$> getList ent
 
     add :: a -> IO Int
     add entity = do
-        oldEntities <- getList
+        oldEntities <- getList entity
         let entId = getUnicId oldEntities
         let newEntity = changeEntityId entity entId
-        addLine entityName (writeEntity newEntity)
+        addLine (entityName entity) (writeEntity newEntity)
         return entId
 
     edit :: a -> IO ()
     edit entity = do
-        oldEntities <- getList
+        oldEntities <- getList entity
         let lineId = getListId (entityId entity) oldEntities
-        replaceLine entityName (writeEntity entity) (fromMaybe (-1) lineId)
+        replaceLine (entityName entity) (writeEntity entity) (fromMaybe (-1) lineId)
         return()
 
-    delete :: Int -> IO ()
-    delete enId = do
-        oldEntities <- getList
+    delete :: a -> Int -> IO ()
+    delete ent enId = do
+        oldEntities <- getList ent
         let lineId = getListId enId oldEntities
-        let text = entityName
-        deleteLine text (fromMaybe (-1) lineId)
+        deleteLine (entityName ent) (fromMaybe (-1) lineId)
+    
+    getEntity :: a
 
 getUnicId :: (RepositoryEntity a) => [a] -> Int
 getUnicId xs = entityId (last xs) + 1

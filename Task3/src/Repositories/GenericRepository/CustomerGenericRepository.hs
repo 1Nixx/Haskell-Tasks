@@ -3,5 +3,8 @@ module Repositories.GenericRepository.CustomerGenericRepository () where
 
 import Data.Entities (Customer(..))
 import Repositories.GenericRepository.GenericRepositoryClass
+import Data.RepositoryEntity.RepositoryEntity
 
-instance GenericRepository Customer 
+instance GenericRepository Customer where
+    getEntity = getInstance
+    
