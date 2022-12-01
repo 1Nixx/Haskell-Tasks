@@ -1,9 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
-module Repositories.GenericRepository.ProductGenericRepository () where
+module Repositories.GenericRepository.ProductOrderGenericRepository () where
 
-import Data.Entities (Product(..))
+import Data.Entities (ProductOrder(..))
 import Repositories.GenericRepository.GenericRepositoryClass
 import Data.RepositoryEntity.RepositoryEntityClass
 
-instance GenericRepository Product where
+instance GenericRepository ProductOrder where
     ofEntity = getInstance

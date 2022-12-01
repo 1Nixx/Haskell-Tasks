@@ -6,5 +6,5 @@ import Repositories.GenericRepository.GenericRepositoryClass
 import Data.RepositoryEntity.RepositoryEntity
 
 instance GenericRepository Customer where
-    getEntity = getInstance
+    ofEntity = getInstance
     

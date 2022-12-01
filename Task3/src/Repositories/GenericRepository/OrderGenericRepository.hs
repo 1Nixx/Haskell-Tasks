@@ -6,4 +6,4 @@ import Repositories.GenericRepository.GenericRepositoryClass
 import Data.RepositoryEntity.RepositoryEntity
 
 instance GenericRepository Order where
-    getEntity = getInstance
+    ofEntity = getInstance

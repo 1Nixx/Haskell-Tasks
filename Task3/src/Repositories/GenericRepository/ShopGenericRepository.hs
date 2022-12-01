@@ -6,4 +6,4 @@ import Repositories.GenericRepository.GenericRepositoryClass
 import Data.RepositoryEntity.RepositoryEntityClass
 
 instance GenericRepository Shop where
-    getEntity = getInstance
+    ofEntity = getInstance

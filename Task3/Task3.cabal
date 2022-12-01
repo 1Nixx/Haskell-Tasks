@@ -44,16 +44,15 @@ library
       Data.RepositoryEntity.RepositoryProductOrder
       Data.RepositoryEntity.RepositoryShop
       Mappings.Mappings
-      Repositories.Customers
       Repositories.GenericRepository.CustomerGenericRepository
       Repositories.GenericRepository.GenericRepository
       Repositories.GenericRepository.GenericRepositoryClass
       Repositories.GenericRepository.OrderGenericRepository
       Repositories.GenericRepository.ProductGenericRepository
+      Repositories.GenericRepository.ProductOrderGenericRepository
       Repositories.GenericRepository.ShopGenericRepository
-      Repositories.Orders
-      Repositories.Products
-      Repositories.Shops
+      Repositories.OrderRepository
+      Repositories.ProductRepository
       Services.Customer
       Services.Orders
       Services.Products

@@ -40,7 +40,7 @@ class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
         let lineId = getListId enId oldEntities
         deleteLine (entityName ent) (fromMaybe (-1) lineId)
     
-    getEntity :: a
+    ofEntity :: a
 
 getUnicId :: (RepositoryEntity a) => [a] -> Int
 getUnicId xs = entityId (last xs) + 1
