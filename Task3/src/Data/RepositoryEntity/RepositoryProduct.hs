@@ -9,4 +9,3 @@ instance RepositoryEntity Product where
     entityId = productId
     entityName _ = "Products"
     changeEntityId prod newId = Product newId (productShopId prod) (productName prod) (productPrice prod) (productColor prod)
-    getInstance = Product {}

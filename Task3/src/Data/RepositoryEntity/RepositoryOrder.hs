@@ -9,4 +9,3 @@ instance RepositoryEntity Order where
     entityId = orderId
     entityName _ = "Orders"
     changeEntityId ord newId = ord {orderId = newId}
-    getInstance = Order {}

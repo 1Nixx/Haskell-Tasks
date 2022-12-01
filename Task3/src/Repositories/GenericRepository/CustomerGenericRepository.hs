@@ -1,10 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -Wno-missing-methods #-}
 module Repositories.GenericRepository.CustomerGenericRepository () where
 
 import Data.Entities (Customer(..))
 import Repositories.GenericRepository.GenericRepositoryClass
-import Data.RepositoryEntity.RepositoryEntity
 
-instance GenericRepository Customer where
-    ofEntity = getInstance
+instance GenericRepository Customer 
     

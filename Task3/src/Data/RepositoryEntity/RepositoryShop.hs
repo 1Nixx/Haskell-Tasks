@@ -9,4 +9,3 @@ instance RepositoryEntity Shop where
     entityId = shopId
     entityName _ = "Shops"
     changeEntityId shp newId = shp {shopId = newId}
-    getInstance = Shop {}

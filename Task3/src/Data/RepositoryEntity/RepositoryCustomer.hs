@@ -9,4 +9,3 @@ instance RepositoryEntity Customer where
     entityId = customerId
     entityName _ = "Customers"
     changeEntityId cs newId = cs {customerId = newId}
-    getInstance = Customer {}

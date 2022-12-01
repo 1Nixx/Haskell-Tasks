@@ -5,4 +5,3 @@ class RepositoryEntity a where
     entityId :: a -> Int
     entityName ::  a -> String
     changeEntityId :: a -> Int -> a
-    getInstance :: a
