@@ -27,6 +27,8 @@ library
   exposed-modules:
       Data.CommonEntity
       Data.Context
+      Data.Converters.Converter
+      Data.Converters.ConverterClass
       Data.Converters.CustomerConverter
       Data.Converters.OrderConverter
       Data.Converters.ProductConverter
@@ -34,11 +36,23 @@ library
       Data.Converters.ShopConverter
       Data.Entities
       Data.Models
+      Data.RepositoryEntity.RepositoryCustomer
+      Data.RepositoryEntity.RepositoryEntity
+      Data.RepositoryEntity.RepositoryEntityClass
+      Data.RepositoryEntity.RepositoryOrder
+      Data.RepositoryEntity.RepositoryProduct
+      Data.RepositoryEntity.RepositoryProductOrder
+      Data.RepositoryEntity.RepositoryShop
       Mappings.Mappings
-      Repositories.Customers
-      Repositories.Orders
-      Repositories.Products
-      Repositories.Shops
+      Repositories.GenericRepository.CustomerGenericRepository
+      Repositories.GenericRepository.GenericRepository
+      Repositories.GenericRepository.GenericRepositoryClass
+      Repositories.GenericRepository.OrderGenericRepository
+      Repositories.GenericRepository.ProductGenericRepository
+      Repositories.GenericRepository.ProductOrderGenericRepository
+      Repositories.GenericRepository.ShopGenericRepository
+      Repositories.OrderRepository
+      Repositories.ProductRepository
       Services.Customer
       Services.Orders
       Services.Products

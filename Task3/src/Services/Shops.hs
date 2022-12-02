@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeApplications #-}
 module Services.Shops
     ( getShops
     , getShop
@@ -7,17 +8,18 @@ module Services.Shops
 
 import Data.Models (ShopModel)
 import Mappings.Mappings (mapShopToModel, mapModelToShop)
-import qualified Repositories.Shops as ShopRep
-import qualified Repositories.Products as ProdRep
+import qualified Repositories.ProductRepository as ProdRep
+import Repositories.GenericRepository.GenericRepository
+import Data.Entities (Shop)
 
 getShops :: IO [ShopModel]
 getShops = do 
-    sps <- ShopRep.getShops
+    sps <- getList
     return $ map (`mapShopToModel` Nothing) sps 
 
 getShop :: Int -> IO (Maybe ShopModel)
 getShop shopId = do
-    shopRes <- ShopRep.getShopById shopId
+    shopRes <- get shopId
     case shopRes of
         Nothing -> return Nothing
         Just value -> do
@@ -27,12 +29,12 @@ getShop shopId = do
 addShop :: ShopModel -> IO Int
 addShop shop = 
     let shop' = mapModelToShop shop     
-    in ShopRep.addShop shop'
+    in add shop'
 
 editShop :: ShopModel -> IO ()
 editShop shop = 
     let shop' = mapModelToShop shop     
-    in ShopRep.editShop shop'
+    in edit shop'
 
 deleteShop :: Int -> IO ()
-deleteShop = ShopRep.deleteShop
+deleteShop = delete @Shop

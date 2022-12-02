@@ -1,3 +1,5 @@
+{-# LANGUAGE TypeApplications #-}
+
 module Services.Customer
     ( getCustomers
     , getCustomer
@@ -6,19 +8,21 @@ module Services.Customer
     , deleteCustomer) where
 
 import Data.Models (CustomerModel)
-import qualified Repositories.Customers as CustomerRep
-import qualified Repositories.Orders as OrderRep
-import qualified Repositories.Products as ProductRep
+import Data.Entities (Customer (Customer))
+import qualified Repositories.OrderRepository as OrderRep
+import qualified Repositories.ProductRepository as ProductRep
+import Repositories.GenericRepository.GenericRepository
 import Mappings.Mappings (mapCustomerToModel, mapModelToCutomer)
+
 
 getCustomers :: IO [CustomerModel]
 getCustomers = do
-    csts <- CustomerRep.getCustomers 
+    csts <- getList
     return (map (\o -> mapCustomerToModel o Nothing Nothing) csts)
 
 getCustomer :: Int -> IO (Maybe CustomerModel)
 getCustomer custId = do
-    customer <- CustomerRep.getCustomerById custId
+    customer <- get custId
     case customer of
         Nothing -> return Nothing
         Just value -> do
@@ -27,14 +31,14 @@ getCustomer custId = do
             return (Just . mapCustomerToModel value (Just orders) . Just $ prodWithIds)
 
 addCustomer :: CustomerModel -> IO Int
-addCustomer customer = 
-    let customer' = mapModelToCutomer customer     
-    in CustomerRep.addCustomer customer'
+addCustomer customer =
+    let customer' = mapModelToCutomer customer
+    in add customer'
 
 editCustomer :: CustomerModel -> IO ()
-editCustomer customer = 
-    let customer' = mapModelToCutomer customer     
-    in CustomerRep.editCustomer customer'
+editCustomer customer =
+    let customer' = mapModelToCutomer customer
+    in edit customer'
 
 deleteCustomer :: Int -> IO ()
-deleteCustomer = CustomerRep.deleteCustomer
+deleteCustomer = delete @Customer
