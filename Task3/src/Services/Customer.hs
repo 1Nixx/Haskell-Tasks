@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeApplications #-}
 
 module Services.Customer
     ( getCustomers
@@ -40,4 +41,4 @@ editCustomer customer =
     in edit customer'
 
 deleteCustomer :: Int -> IO ()
-deleteCustomer = delete
+deleteCustomer = delete @Customer

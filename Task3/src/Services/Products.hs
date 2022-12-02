@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeApplications #-}
 module Services.Products
     ( getProducts
     , getProduct
@@ -35,4 +36,4 @@ editProduct prod =
     in edit prod' 
 
 deleteProduct :: Int -> IO ()
-deleteProduct = delete
+deleteProduct = delete @Product

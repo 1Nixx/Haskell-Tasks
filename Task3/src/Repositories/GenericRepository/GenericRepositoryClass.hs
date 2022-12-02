@@ -39,7 +39,7 @@ class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
         replaceLine name (writeEntity entity) (fromMaybe (-1) lineId)
         return()
 
-    delete :: (RepositoryEntity a) => Int -> IO ()
+    delete :: Int -> IO ()
     delete enId = do
         oldEntities <- getList :: IO [a]
         let name = entityString (entityName :: EntityName a)

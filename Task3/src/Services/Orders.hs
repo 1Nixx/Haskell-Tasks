@@ -1,5 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use forM_" #-}
+{-# LANGUAGE TypeApplications #-}
 module Services.Orders
     ( getOrders
     , getOrder
@@ -39,4 +40,4 @@ editOrder order =
     in edit order'
 
 deleteOrder :: Int -> IO ()
-deleteOrder = delete
+deleteOrder = delete @Order
