@@ -11,17 +11,17 @@ import Repositories.GenericRepository.GenericRepository
 
 getProductsByOrderId :: Int -> IO [Product]
 getProductsByOrderId searchOrderId = do
-    productOrders <- getList (ofEntity :: ProductOrder) 
-    mapM (fmap fromJust . get (ofEntity :: Product) . prodFKId) $ filter (\ a -> orderFKId a == searchOrderId) productOrders
+    productOrders <- getList
+    mapM (fmap fromJust . get . prodFKId) $ filter (\ a -> orderFKId a == searchOrderId) productOrders
 
 getProductsByShopId :: Int -> IO [Product]
 getProductsByShopId searchShopId = do
-    prds <- getList (ofEntity :: Product) 
+    prds <- getList
     return $ filter (\ a -> productShopId a == searchShopId) prds
 
 getProductsWithOrdersId :: IO [(Int, [Product])]
 getProductsWithOrdersId = do
-    orders <- getList (ofEntity :: Order) 
+    orders <- getList
     mapM step orders
     where
         step :: Order -> IO (Int, [Product])

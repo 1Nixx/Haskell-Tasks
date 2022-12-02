@@ -13,12 +13,12 @@ import Data.Entities (Shop)
 
 getShops :: IO [ShopModel]
 getShops = do 
-    sps <- getList ofEntity
+    sps <- getList
     return $ map (`mapShopToModel` Nothing) sps 
 
 getShop :: Int -> IO (Maybe ShopModel)
 getShop shopId = do
-    shopRes <- get ofEntity shopId
+    shopRes <- get shopId
     case shopRes of
         Nothing -> return Nothing
         Just value -> do
@@ -36,4 +36,4 @@ editShop shop =
     in edit shop'
 
 deleteShop :: Int -> IO ()
-deleteShop = delete (ofEntity :: Shop)
+deleteShop = delete 

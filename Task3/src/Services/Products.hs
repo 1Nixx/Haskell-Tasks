@@ -12,16 +12,16 @@ import Mappings.Mappings (mapProductToModel, mapModelToProduct)
 
 getProducts :: IO [ProductModel]
 getProducts = do
-    prds <- getList ofEntity
+    prds <- getList
     return $ map (`mapProductToModel` Nothing) prds 
 
 getProduct :: Int -> IO (Maybe ProductModel)
 getProduct prodId = do
-    productRes <- get ofEntity prodId
+    productRes <- get prodId
     case productRes of 
         Nothing -> return Nothing
         Just value -> do
-            maybeShop <- get ofEntity $ productShopId value
+            maybeShop <- get $ productShopId value
             return $ Just $ mapProductToModel value maybeShop
 
 addProduct :: ProductModel -> IO Int
@@ -35,4 +35,4 @@ editProduct prod =
     in edit prod' 
 
 deleteProduct :: Int -> IO ()
-deleteProduct = delete (ofEntity :: Product)
+deleteProduct = delete

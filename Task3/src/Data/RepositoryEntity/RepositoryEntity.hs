@@ -1,4 +1,4 @@
-module Data.RepositoryEntity.RepositoryEntity (RepositoryEntity(..)) where
+module Data.RepositoryEntity.RepositoryEntity (RepositoryEntity(..), EntityName(..)) where
 
 import Data.RepositoryEntity.RepositoryEntityClass
 import Data.RepositoryEntity.RepositoryCustomer ()

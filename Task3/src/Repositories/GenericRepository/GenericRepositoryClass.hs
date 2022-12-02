@@ -1,5 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE ConstrainedClassMethods #-}
+
 module Repositories.GenericRepository.GenericRepositoryClass (GenericRepository(..)) where
 
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
@@ -10,37 +12,39 @@ import Data.Converters.Converter
 import Data.RepositoryEntity.RepositoryEntity
 
 class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
-    getList :: a -> IO [a]
-    getList ent = do 
-        fileData <- readEntityFields (entityName ent)
+    getList :: IO [a]
+    getList = do
+        let name = entityString (entityName :: EntityName a)
+        fileData <- readEntityFields name
         return (map readEntity fileData)
 
-    get :: a -> Int -> IO (Maybe a)
-    get ent eid = do
-        maybeHead . filter (\a -> entityId a == eid) <$> getList ent
+    get :: Int -> IO (Maybe a)
+    get eid = do
+        maybeHead . filter (\a -> entityId a == eid) <$> getList
 
     add :: a -> IO Int
     add entity = do
-        oldEntities <- getList entity
+        oldEntities <- getList :: IO [a]
+        let name = entityString (entityName :: EntityName a)
         let entId = getUnicId oldEntities
         let newEntity = changeEntityId entity entId
-        addLine (entityName entity) (writeEntity newEntity)
+        addLine name (writeEntity newEntity)
         return entId
 
     edit :: a -> IO ()
     edit entity = do
-        oldEntities <- getList entity
+        oldEntities <- getList :: IO [a]
+        let name = entityString (entityName :: EntityName a)
         let lineId = getListId (entityId entity) oldEntities
-        replaceLine (entityName entity) (writeEntity entity) (fromMaybe (-1) lineId)
+        replaceLine name (writeEntity entity) (fromMaybe (-1) lineId)
         return()
 
-    delete :: a -> Int -> IO ()
-    delete ent enId = do
-        oldEntities <- getList ent
+    delete :: (RepositoryEntity a) => Int -> IO ()
+    delete enId = do
+        oldEntities <- getList :: IO [a]
+        let name = entityString (entityName :: EntityName a)
         let lineId = getListId enId oldEntities
-        deleteLine (entityName ent) (fromMaybe (-1) lineId)
-    
-    ofEntity :: a
+        deleteLine name (fromMaybe (-1) lineId)
 
 getUnicId :: (RepositoryEntity a) => [a] -> Int
 getUnicId xs = entityId (last xs) + 1

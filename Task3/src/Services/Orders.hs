@@ -15,16 +15,16 @@ import Repositories.GenericRepository.GenericRepository
 
 getOrders :: IO [OrderModel]
 getOrders = do
-    ords <- getList ofEntity
+    ords <- getList
     return (map (\ o -> mapOrderToModel o Nothing Nothing) ords)
 
 getOrder :: Int -> IO (Maybe OrderModel)
 getOrder ordId = do
-    orderRes <- get ofEntity ordId
+    orderRes <- get ordId
     case orderRes of
         Nothing -> return Nothing
         Just value -> do
-            maybeCustomer <- get ofEntity $ orderCustomerId value
+            maybeCustomer <- get $ orderCustomerId value
             products <- ProdRep.getProductsByOrderId $ orderId value
             return $ Just $ mapOrderToModel value maybeCustomer (Just products)
 
@@ -39,4 +39,4 @@ editOrder order =
     in edit order'
 
 deleteOrder :: Int -> IO ()
-deleteOrder = delete (ofEntity :: Order)
+deleteOrder = delete

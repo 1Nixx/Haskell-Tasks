@@ -1,3 +1,4 @@
+
 module Services.Customer
     ( getCustomers
     , getCustomer
@@ -6,7 +7,7 @@ module Services.Customer
     , deleteCustomer) where
 
 import Data.Models (CustomerModel)
-import Data.Entities (Customer)
+import Data.Entities (Customer (Customer))
 import qualified Repositories.OrderRepository as OrderRep
 import qualified Repositories.ProductRepository as ProductRep
 import Repositories.GenericRepository.GenericRepository
@@ -15,12 +16,12 @@ import Mappings.Mappings (mapCustomerToModel, mapModelToCutomer)
 
 getCustomers :: IO [CustomerModel]
 getCustomers = do
-    csts <- getList ofEntity
+    csts <- getList
     return (map (\o -> mapCustomerToModel o Nothing Nothing) csts)
 
 getCustomer :: Int -> IO (Maybe CustomerModel)
 getCustomer custId = do
-    customer <- get ofEntity custId
+    customer <- get custId
     case customer of
         Nothing -> return Nothing
         Just value -> do
@@ -39,4 +40,4 @@ editCustomer customer =
     in edit customer'
 
 deleteCustomer :: Int -> IO ()
-deleteCustomer = delete (ofEntity :: Customer)
+deleteCustomer = delete
