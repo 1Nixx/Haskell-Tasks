@@ -16,9 +16,7 @@ import Mappings.Mappings (mapCustomerToModel, mapModelToCutomer)
 
 
 getCustomers :: IO [CustomerModel]
-getCustomers = do
-    csts <- getList
-    return (map (\o -> mapCustomerToModel o Nothing Nothing) csts)
+getCustomers = map (\o -> mapCustomerToModel o Nothing Nothing) <$> getList
 
 getCustomer :: Int -> IO (Maybe CustomerModel)
 getCustomer custId = do

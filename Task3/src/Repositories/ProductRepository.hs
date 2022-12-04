@@ -15,14 +15,11 @@ getProductsByOrderId searchOrderId = do
     mapM (fmap fromJust . get . prodFKId) $ filter (\ a -> orderFKId a == searchOrderId) productOrders
 
 getProductsByShopId :: Int -> IO [Product]
-getProductsByShopId searchShopId = do
-    prds <- getList
-    return $ filter (\ a -> productShopId a == searchShopId) prds
+getProductsByShopId searchShopId = filter (\ a -> productShopId a == searchShopId) <$> getList
 
 getProductsWithOrdersId :: IO [(Int, [Product])]
-getProductsWithOrdersId = do
-    orders <- getList
-    mapM step orders
+getProductsWithOrdersId =
+    getList >>= mapM step
     where
         step :: Order -> IO (Int, [Product])
         step ord = do

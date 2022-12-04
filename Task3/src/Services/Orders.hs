@@ -15,9 +15,7 @@ import Data.Entities (Order(orderCustomerId, orderId))
 import Repositories.GenericRepository.GenericRepository
 
 getOrders :: IO [OrderModel]
-getOrders = do
-    ords <- getList
-    return (map (\ o -> mapOrderToModel o Nothing Nothing) ords)
+getOrders = map (\ o -> mapOrderToModel o Nothing Nothing) <$> getList
 
 getOrder :: Int -> IO (Maybe OrderModel)
 getOrder ordId = do
@@ -30,13 +28,13 @@ getOrder ordId = do
             return $ Just $ mapOrderToModel value maybeCustomer (Just products)
 
 addOrder :: OrderModel -> IO Int
-addOrder ord = 
+addOrder ord =
     let order' = mapModelToOrder ord
     in add order'
 
 editOrder :: OrderModel -> IO ()
-editOrder order = 
-    let order' = mapModelToOrder order     
+editOrder order =
+    let order' = mapModelToOrder order
     in edit order'
 
 deleteOrder :: Int -> IO ()

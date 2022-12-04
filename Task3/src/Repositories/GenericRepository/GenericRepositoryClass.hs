@@ -14,13 +14,11 @@ import Data.RepositoryEntity.RepositoryEntity
 class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
     getList :: IO [a]
     getList = do
-        let name = entityString (entityName :: EntityName a)
-        fileData <- readEntityFields name
-        return (map readEntity fileData)
+        fileData <- readEntityFields $ entityString (entityName :: EntityName a)
+        mapM (return . readEntity) fileData
 
     get :: Int -> IO (Maybe a)
-    get eid = do
-        maybeHead . filter (\a -> entityId a == eid) <$> getList
+    get eid = maybeHead . filter (\a -> entityId a == eid) <$> getList
 
     add :: a -> IO Int
     add entity = do
@@ -37,7 +35,6 @@ class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
         let name = entityString (entityName :: EntityName a)
         let lineId = getListId (entityId entity) oldEntities
         replaceLine name (writeEntity entity) (fromMaybe (-1) lineId)
-        return()
 
     delete :: Int -> IO ()
     delete enId = do
