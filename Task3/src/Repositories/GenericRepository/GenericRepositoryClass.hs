@@ -13,9 +13,9 @@ import Data.RepositoryEntity.RepositoryEntity
 
 class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
     getList :: IO [a]
-    getList = do
-        fileData <- readEntityFields $ entityString (entityName :: EntityName a)
-        mapM (return . readEntity) fileData
+    getList =
+        readEntityFields (entityString (entityName :: EntityName a)) >>=
+        mapM (return . readEntity)
 
     get :: Int -> IO (Maybe a)
     get eid = maybeHead . filter (\a -> entityId a == eid) <$> getList

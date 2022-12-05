@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use forM_" #-}
 {-# LANGUAGE TypeApplications #-}
+{-# HLINT ignore "Use lambda-case" #-}
 module Services.Orders
     ( getOrders
     , getOrder
@@ -18,14 +19,14 @@ getOrders :: IO [OrderModel]
 getOrders = map (\ o -> mapOrderToModel o Nothing Nothing) <$> getList
 
 getOrder :: Int -> IO (Maybe OrderModel)
-getOrder ordId = do
-    orderRes <- get ordId
-    case orderRes of
-        Nothing -> return Nothing
-        Just value -> do
-            maybeCustomer <- get $ orderCustomerId value
-            products <- ProdRep.getProductsByOrderId $ orderId value
-            return $ Just $ mapOrderToModel value maybeCustomer (Just products)
+getOrder ordId =
+    get ordId >>= \orderRes ->
+        case orderRes of
+            Nothing -> return Nothing
+            Just value ->
+                get (orderCustomerId value) >>= \maybeCustomer ->
+                ProdRep.getProductsByOrderId (orderId value) >>= \products ->
+                return $ Just $ mapOrderToModel value maybeCustomer (Just products)
 
 addOrder :: OrderModel -> IO Int
 addOrder ord =

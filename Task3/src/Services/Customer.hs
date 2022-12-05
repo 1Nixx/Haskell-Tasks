@@ -1,4 +1,6 @@
 {-# LANGUAGE TypeApplications #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use lambda-case" #-}
 
 module Services.Customer
     ( getCustomers
@@ -19,14 +21,14 @@ getCustomers :: IO [CustomerModel]
 getCustomers = map (\o -> mapCustomerToModel o Nothing Nothing) <$> getList
 
 getCustomer :: Int -> IO (Maybe CustomerModel)
-getCustomer custId = do
-    customer <- get custId
-    case customer of
-        Nothing -> return Nothing
-        Just value -> do
-            orders <- OrderRep.getOrdersByCustomerId custId
-            prodWithIds <- ProductRep.getProductsWithOrdersId
-            return (Just . mapCustomerToModel value (Just orders) . Just $ prodWithIds)
+getCustomer custId =
+    get custId >>= \custRes ->
+        case custRes of
+            Nothing -> return Nothing
+            Just value ->
+                OrderRep.getOrdersByCustomerId custId >>= \orders ->
+                ProductRep.getProductsWithOrdersId >>= \prodWithIds ->
+                return $ Just . mapCustomerToModel value (Just orders) . Just $ prodWithIds
 
 addCustomer :: CustomerModel -> IO Int
 addCustomer customer =

@@ -1,4 +1,6 @@
 {-# LANGUAGE TypeApplications #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use lambda-case" #-}
 module Services.Shops
     ( getShops
     , getShop
@@ -16,13 +18,13 @@ getShops :: IO [ShopModel]
 getShops = map (`mapShopToModel` Nothing) <$> getList
 
 getShop :: Int -> IO (Maybe ShopModel)
-getShop shopId = do
-    shopRes <- get shopId
-    case shopRes of
-        Nothing -> return Nothing
-        Just value -> do
-            prodList <- ProdRep.getProductsByShopId shopId
-            return $ Just $ mapShopToModel value (Just prodList)
+getShop shopId = 
+    get shopId >>= \shopRes ->
+        case shopRes of
+            Nothing -> return Nothing
+            Just value ->
+                ProdRep.getProductsByShopId shopId >>= \prodList ->
+                return $ Just $ mapShopToModel value (Just prodList)
 
 addShop :: ShopModel -> IO Int
 addShop shop =
