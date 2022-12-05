@@ -18,12 +18,13 @@ getProducts = map (`mapProductToModel` Nothing) <$> getList
 
 getProduct :: Int -> IO (Maybe ProductModel)
 getProduct prodId =
-    get prodId >>= \productRes ->
-        case productRes of
-            Nothing -> return Nothing
-            Just value ->
-                get (productShopId value) >>= \maybeShop ->
-                return $ Just $ mapProductToModel value maybeShop
+    get prodId >>= getProductModel
+    where
+        getProductModel Nothing = return Nothing
+        getProductModel (Just value) =
+            let maybeShop = get (productShopId value)
+            in Just . mapProductToModel value <$> maybeShop
+
 
 addProduct :: ProductModel -> IO Int
 addProduct prod =
