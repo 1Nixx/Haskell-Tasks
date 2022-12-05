@@ -10,8 +10,8 @@ import Data.Maybe (fromJust)
 import Repositories.GenericRepository.GenericRepository
 
 getProductsByOrderId :: Int -> IO [Product]
-getProductsByOrderId searchOrderId = do
-    productOrders <- getList
+getProductsByOrderId searchOrderId =
+    getList >>= \productOrders ->
     mapM (fmap fromJust . get . prodFKId) $ filter (\ a -> orderFKId a == searchOrderId) productOrders
 
 getProductsByShopId :: Int -> IO [Product]
@@ -22,7 +22,7 @@ getProductsWithOrdersId =
     getList >>= mapM step
     where
         step :: Order -> IO (Int, [Product])
-        step ord = do
+        step ord =
             let orderid = orderId ord
-            products <- getProductsByOrderId orderid
+            in getProductsByOrderId orderid >>= \products ->
             return (orderid, products)
