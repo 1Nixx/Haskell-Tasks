@@ -14,6 +14,8 @@ import Data.Maybe (fromMaybe)
 import Data.Converters.Converter
 import Data.RepositoryEntity.RepositoryEntity
 import Data.Functor ((<&>))
+import Data.SearchModels (SearchModel(..))
+import Repositories.FilterApplier (applyPagination)
 
 class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
     getList :: IO [a]
@@ -44,13 +46,10 @@ class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
         let name = entityString (entityName :: EntityName a)
         in deleteLine name (fromMaybe (-1) lineId)
     
-    search :: (b -> [a] -> [a]) -> b -> IO [a]
+    search :: (SearchModel b) => (b -> [a] -> [a]) -> b -> IO [a]
     search filters filterModel = do
-            entities <- getList :: IO [a]
-            let filteredList = filters filterModel entities
-            --TODO: apply paginating
-            return filteredList
-
+        entities <- getList :: IO [a]
+        return $ applyPagination (getPageNumber filterModel) (getPageCount filterModel) $ filters filterModel entities
 
 getUnicId :: (RepositoryEntity a) => [a] -> Int
 getUnicId xs = entityId (last xs) + 1

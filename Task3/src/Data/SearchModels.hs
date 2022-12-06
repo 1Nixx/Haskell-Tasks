@@ -1,10 +1,35 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE InstanceSigs #-}
+
 module Data.SearchModels 
     ( ProductSearchModel(..)
     , ShopSearchModel(..)
     , CustomerSearchModel(..)
-    , OrderSearchModel(..)) where
+    , OrderSearchModel(..)
+    , SearchModel(..)) where
     
 import Data.CommonEntity (Color)
+
+class SearchModel a where 
+    getPageNumber :: a -> Int
+    getPageCount :: a -> Int
+    getPageCount _ = 5
+
+instance SearchModel ProductSearchModel where
+    getPageNumber :: ProductSearchModel -> Int
+    getPageNumber = productSearchModelPage
+
+instance SearchModel ShopSearchModel where
+    getPageNumber :: ShopSearchModel -> Int
+    getPageNumber = shopSearchModelPage
+
+instance SearchModel CustomerSearchModel where
+    getPageNumber :: CustomerSearchModel -> Int
+    getPageNumber = customerSearchModelPage
+
+instance SearchModel OrderSearchModel where
+    getPageNumber :: OrderSearchModel -> Int
+    getPageNumber = orderSearchModelPage
 
 data ProductSearchModel = ProductSearchModel {
     productSearchModelName :: Maybe String,
