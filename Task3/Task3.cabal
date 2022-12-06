@@ -44,6 +44,7 @@ library
       Data.RepositoryEntity.RepositoryProductOrder
       Data.RepositoryEntity.RepositoryShop
       Mappings.Mappings
+      Repositories.FilterApplier
       Repositories.GenericRepository.CustomerGenericRepository
       Repositories.GenericRepository.GenericRepository
       Repositories.GenericRepository.GenericRepositoryClass

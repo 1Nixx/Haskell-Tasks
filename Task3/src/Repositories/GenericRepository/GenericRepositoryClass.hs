@@ -43,6 +43,14 @@ class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
         (getList :: IO [a]) <&> getListId enId >>= \lineId ->
         let name = entityString (entityName :: EntityName a)
         in deleteLine name (fromMaybe (-1) lineId)
+    
+    search :: (b -> [a] -> [a]) -> b -> IO [a]
+    search filters filterModel = do
+            entities <- getList :: IO [a]
+            let filteredList = filters filterModel entities
+            --TODO: apply paginating
+            return filteredList
+
 
 getUnicId :: (RepositoryEntity a) => [a] -> Int
 getUnicId xs = entityId (last xs) + 1
