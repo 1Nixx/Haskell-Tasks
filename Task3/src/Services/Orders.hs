@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use forM_" #-}
 {-# LANGUAGE TypeApplications #-}
-{-# HLINT ignore "Use lambda-case" #-}
+
 module Services.Orders
     ( getOrders
     , getOrder

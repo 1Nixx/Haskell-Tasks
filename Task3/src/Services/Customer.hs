@@ -1,5 +1,4 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use lambda-case" #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Services.Customer

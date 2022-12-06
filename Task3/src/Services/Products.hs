@@ -1,6 +1,6 @@
 {-# LANGUAGE TypeApplications #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use lambda-case" #-}
+
 module Services.Products
     ( getProducts
     , getProduct

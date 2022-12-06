@@ -5,43 +5,41 @@ import System.IO
 import qualified Data.Text as Text
 
 readEntityFromFile :: String -> IO String
-readEntityFromFile entityName = do
-    input <- openFile (fileName entityName) ReadMode
-    text <- hGetContents input
-    putStrLn text
-    hClose input
-    return text
+readEntityFromFile entityName =
+    openFile (fileName entityName) ReadMode >>= \input -> 
+        hGetContents input >>= \text ->
+        putStrLn text >>
+        hClose input >>
+        return text
 
 writeEntityToFile :: String -> String -> IO ()
-writeEntityToFile entityName text = do
-    writeFile (fileName entityName) text
+writeEntityToFile entityName = writeFile (fileName entityName)
 
 readEntityFields :: String -> IO [[String]]
-readEntityFields entityName = do
-    text <- readEntityFromFile entityName
-    let splitByFields = map (map Text.unpack . Text.split (=='|') . Text.pack ) (lines text)
-    return splitByFields
+readEntityFields entityName =
+    readEntityFromFile entityName >>=
+    mapM (return . map Text.unpack . Text.split (=='|') . Text.pack ) . lines
 
 deleteLine :: String -> Int -> IO ()
-deleteLine entityName lineInd = do
-    text <- readEntityFromFile entityName
-    let rows = lines text
-    let resultRows = unlines $ removeAt lineInd rows
-    writeEntityToFile entityName resultRows
+deleteLine entityName lineInd =
+    readEntityFromFile entityName >>= \text -> 
+        let rows = lines text
+            resultRows = unlines $ removeAt lineInd rows
+        in writeEntityToFile entityName resultRows
 
 addLine :: String -> String -> IO ()
-addLine entityName line = do
-    text <- readEntityFromFile entityName
-    let rows = lines text
-    let resultRows = unlines (rows ++ [line])
-    writeEntityToFile entityName resultRows
+addLine entityName line =
+    readEntityFromFile entityName >>= \text -> 
+        let rows = lines text
+            resultRows = unlines (rows ++ [line])
+        in writeEntityToFile entityName resultRows
 
 replaceLine :: String -> String -> Int -> IO ()
-replaceLine entityName line lineInd = do
-    text <- readEntityFromFile entityName
-    let rows = lines text
-    let resultRows = unlines $ replaceAt lineInd line rows
-    writeEntityToFile entityName resultRows
+replaceLine entityName line lineInd =
+    readEntityFromFile entityName >>= \text -> 
+        let rows = lines text
+            resultRows = unlines $ replaceAt lineInd line rows
+        in writeEntityToFile entityName resultRows
 
 fileName :: String -> String
 fileName entityName = "src/Files/" ++ entityName ++ ".txt"
@@ -54,8 +52,8 @@ removeAt pos xs'@(x:xs)
 removeAt _ [] = []
 
 replaceAt :: Int -> a -> [a] -> [a]
-replaceAt pos el xs'@(x:xs) 
+replaceAt pos el xs'@(x:xs)
     | pos > 0   = x : replaceAt (pos - 1) el xs
     | pos == 0  = el : xs
-    | otherwise = xs' 
-replaceAt _ _ [] = []  
+    | otherwise = xs'
+replaceAt _ _ [] = []
