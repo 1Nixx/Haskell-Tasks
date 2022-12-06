@@ -6,13 +6,17 @@ module Services.Shops
     , getShop
     , addShop
     , editShop
-    , deleteShop) where
+    , deleteShop
+    , searchShops) where
 
 import Data.Models (ShopModel)
 import Mappings.Mappings (mapShopToModel, mapModelToShop)
 import qualified Repositories.ProductRepository as ProdRep
 import Repositories.GenericRepository.GenericRepository
-import Data.Entities (Shop)
+import Data.Entities (Shop (shopName, shopAddress))
+import Data.SearchModels (ShopSearchModel(..))
+import Repositories.FilterApplier (applyFilter)
+import Data.List (isInfixOf)
 
 getShops :: IO [ShopModel]
 getShops = map (`mapShopToModel` Nothing) <$> getList
@@ -38,3 +42,12 @@ editShop shop =
 
 deleteShop :: Int -> IO ()
 deleteShop = delete @Shop
+
+searchShops :: ShopSearchModel -> IO [ShopModel]
+searchShops model =
+    map (`mapShopToModel` Nothing) <$> search filterFunc model
+    where
+        filterFunc :: ShopSearchModel -> [Shop] -> [Shop]
+        filterFunc filters =
+            applyFilter shopName shopSearchModelName isInfixOf filters
+          . applyFilter shopAddress shopSearchModelAddress isInfixOf filters

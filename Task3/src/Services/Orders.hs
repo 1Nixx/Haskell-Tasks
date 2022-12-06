@@ -7,13 +7,17 @@ module Services.Orders
     , getOrder
     , addOrder
     , editOrder
-    , deleteOrder) where
+    , deleteOrder
+    , searchOrders) where
 
 import Data.Models (OrderModel)
 import qualified Repositories.ProductRepository as ProdRep
 import Mappings.Mappings (mapOrderToModel, mapModelToOrder)
-import Data.Entities (Order(orderCustomerId, orderId))
+import Data.Entities (Order(orderCustomerId, orderId, orderNumber))
 import Repositories.GenericRepository.GenericRepository
+import Data.SearchModels (OrderSearchModel(..))
+import Repositories.FilterApplier (applyFilter)
+import Data.List (isInfixOf)
 
 getOrders :: IO [OrderModel]
 getOrders = map (\ o -> mapOrderToModel o Nothing Nothing) <$> getList
@@ -40,3 +44,10 @@ editOrder order =
 
 deleteOrder :: Int -> IO ()
 deleteOrder = delete @Order
+
+searchOrders :: OrderSearchModel -> IO [OrderModel]
+searchOrders model =
+    map (\ o -> mapOrderToModel o Nothing Nothing) <$> search filterFunc model 
+    where
+        filterFunc :: OrderSearchModel -> [Order] -> [Order]
+        filterFunc = applyFilter orderNumber orderSearchModelNumber isInfixOf

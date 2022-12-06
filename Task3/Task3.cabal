@@ -43,6 +43,7 @@ library
       Data.RepositoryEntity.RepositoryProduct
       Data.RepositoryEntity.RepositoryProductOrder
       Data.RepositoryEntity.RepositoryShop
+      Data.SearchModels
       Mappings.Mappings
       Repositories.FilterApplier
       Repositories.GenericRepository.CustomerGenericRepository

@@ -6,12 +6,16 @@ module Services.Products
     , getProduct
     , addProduct
     , editProduct
-    , deleteProduct) where
+    , deleteProduct
+    , searchProducts) where
 
 import Data.Models (ProductModel)
-import Data.Entities (productShopId, Product)
+import Data.Entities (productShopId, Product, productName, productPrice, productColor)
 import Repositories.GenericRepository.GenericRepository
 import Mappings.Mappings (mapProductToModel, mapModelToProduct)
+import Data.SearchModels (ProductSearchModel(..))
+import Repositories.FilterApplier (applyFilter)
+import Data.List (isInfixOf)
 
 getProducts :: IO [ProductModel]
 getProducts = map (`mapProductToModel` Nothing) <$> getList
@@ -38,3 +42,13 @@ editProduct prod =
 
 deleteProduct :: Int -> IO ()
 deleteProduct = delete @Product
+
+searchProducts :: ProductSearchModel -> IO [ProductModel]
+searchProducts model =
+    map (`mapProductToModel` Nothing) <$> search filterFunc model 
+    where
+        filterFunc :: ProductSearchModel -> [Product] -> [Product]
+        filterFunc filters =
+            applyFilter productName productSearchModelName isInfixOf filters
+          . applyFilter productPrice productSearchModelPrice (==) filters
+          . applyFilter productColor productSearchModelColor (==) filters
