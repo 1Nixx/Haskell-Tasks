@@ -3,13 +3,15 @@
 module Repositories.FilterApplier 
     ( applyFilter
     , applyPagination) where
-import Data.Maybe (fromMaybe)
 import Data.SearchModels (SearchModel(..))
 
 applyFilter ::(SearchModel c) => (a -> b) -> (c -> Maybe b) -> (b -> b -> Bool) -> c -> [a] -> [a]
 applyFilter arrSelect searchModelSelect funcfilter searchModel arr =
-    fromMaybe arr (searchModelSelect searchModel >>= \searchValue ->
-    return $ filter (funcfilter searchValue . arrSelect) arr)
+    let maybeSearchValue = searchModelSelect searchModel
+    in searchInArr maybeSearchValue
+    where
+        searchInArr (Just value) = filter (funcfilter value . arrSelect) arr
+        searchInArr Nothing = arr
 
 applyPagination :: Int -> Int -> [a] -> [a]
 applyPagination page pageSize = 

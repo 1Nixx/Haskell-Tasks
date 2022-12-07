@@ -28,9 +28,9 @@ getCustomer custId =
     where
         getCustomerModel Nothing = return Nothing
         getCustomerModel (Just value) =
-                let orders = OrderRep.getOrdersByCustomerId custId
-                    prodWithIds = ProductRep.getProductsWithOrdersId
-                in (\ord prodId -> Just . mapCustomerToModel value (Just ord) . Just $ prodId) <$> orders <*> prodWithIds
+            let orders = OrderRep.getOrdersByCustomerId custId
+                prodWithIds = ProductRep.getProductsWithOrdersId
+            in (\ord prodId -> Just . mapCustomerToModel value (Just ord) . Just $ prodId) <$> orders <*> prodWithIds
 
 addCustomer :: CustomerModel -> IO Int
 addCustomer customer =
