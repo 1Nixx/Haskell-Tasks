@@ -1,8 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE ConstrainedClassMethods #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Monad law, left identity" #-}
 {-# HLINT ignore "Redundant <&>" #-}
 
 module Repositories.GenericRepository.GenericRepositoryClass (GenericRepository(..)) where

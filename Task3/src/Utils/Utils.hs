@@ -1,5 +1,3 @@
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
-
 module Utils.Utils (maybeHead) where
 
 maybeHead :: [a] -> Maybe a

@@ -79,7 +79,7 @@ main = do
         customerSearchModelPage = 3
     }
 
-    putStrLn "CustService"
+    putStrLn "CustServiceSearch"
     searchRes <- CustomerService.searchCustomers searchModel
     print searchRes
     putStrLn ""
