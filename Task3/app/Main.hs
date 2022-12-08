@@ -5,6 +5,7 @@ import qualified Services.Shops as ShopService
 import qualified Services.Customer as CustomerService
 import qualified Services.Orders as OrderService
 import Data.Models (CustomerModel(..), OrderModel (..))
+import Data.SearchModels (CustomerSearchModel(..))
 import Data.Maybe (fromJust)
 
 main :: IO ()
@@ -70,4 +71,15 @@ main = do
     putStrLn "OrderService"
     ordNew <- OrderService.getOrder ordId
     print ordNew
+    putStrLn ""
+
+    let searchModel = CustomerSearchModel {
+        customerSearchModelName = Just "Nikita",
+        customerSearchModelAddress = Nothing,
+        customerSearchModelPage = 3
+    }
+
+    putStrLn "CustServiceSearch"
+    searchRes <- CustomerService.searchCustomers searchModel
+    print searchRes
     putStrLn ""

@@ -1,6 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE ConstrainedClassMethods #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant <&>" #-}
 
 module Repositories.GenericRepository.GenericRepositoryClass (GenericRepository(..)) where
 
@@ -10,41 +11,45 @@ import Data.List (findIndex)
 import Data.Maybe (fromMaybe)
 import Data.Converters.Converter
 import Data.RepositoryEntity.RepositoryEntity
+import Data.Functor ((<&>))
+import Data.SearchModels (SearchModel(..))
+import Repositories.FilterApplier (applyPagination)
 
 class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
     getList :: IO [a]
-    getList = do
-        let name = entityString (entityName :: EntityName a)
-        fileData <- readEntityFields name
-        return (map readEntity fileData)
+    getList =
+        readEntityFields (entityString (entityName :: EntityName a)) >>=
+        mapM (return . readEntity)
 
     get :: Int -> IO (Maybe a)
-    get eid = do
-        maybeHead . filter (\a -> entityId a == eid) <$> getList
+    get eid = maybeHead . filter (\a -> entityId a == eid) <$> getList
 
     add :: a -> IO Int
-    add entity = do
-        oldEntities <- getList :: IO [a]
-        let name = entityString (entityName :: EntityName a)
-        let entId = getUnicId oldEntities
+    add entity =
+        ((getList :: IO [a]) <&> getUnicId) >>= \entId ->
         let newEntity = changeEntityId entity entId
-        addLine name (writeEntity newEntity)
+            name = entityString (entityName :: EntityName a)
+        in  addLine name (writeEntity newEntity) >>
         return entId
 
     edit :: a -> IO ()
-    edit entity = do
-        oldEntities <- getList :: IO [a]
+    edit entity =
+        (getList :: IO [a]) <&> getListId (entityId entity) >>= \lineId ->
         let name = entityString (entityName :: EntityName a)
-        let lineId = getListId (entityId entity) oldEntities
-        replaceLine name (writeEntity entity) (fromMaybe (-1) lineId)
-        return()
+        in  replaceLine name (writeEntity entity) (fromMaybe (-1) lineId)
 
     delete :: Int -> IO ()
-    delete enId = do
-        oldEntities <- getList :: IO [a]
+    delete enId =
+        (getList :: IO [a]) <&> getListId enId >>= \lineId ->
         let name = entityString (entityName :: EntityName a)
-        let lineId = getListId enId oldEntities
-        deleteLine name (fromMaybe (-1) lineId)
+        in deleteLine name (fromMaybe (-1) lineId)
+
+    search :: (SearchModel b) => (b -> [a] -> [a]) -> b -> IO [a]
+    search filters filterModel =
+        let entities = getList :: IO [a]
+            pageNumber = getPageNumber filterModel
+            pageSize = getPageSize filterModel
+        in applyPagination pageNumber pageSize . filters filterModel <$> entities
 
 getUnicId :: (RepositoryEntity a) => [a] -> Int
 getUnicId xs = entityId (last xs) + 1
