@@ -12,12 +12,8 @@ import Data.Entities
     ( Product(..)
     , Shop(..)
     , Order(..)
-    , productId
-    , productName
-    , productPrice
-    , productColor
     , Customer(..))
-import Data.Models (ProductModel(..), ShopModel(..), OrderModel(..), CustomerModel (..), productModelShop, productModelId, productModelName, productModelPrice, productModelColor)
+import Data.Models (ProductModel(..), ShopModel(..), OrderModel(..), CustomerModel (..))
 import Utils.Utils (maybeHead)
 import Data.Maybe (fromMaybe)
 
@@ -26,7 +22,13 @@ mapProductToModel prod maybeShop =
     let shopModel = case maybeShop of
             Just value -> Just $ mapShopToModel value Nothing
             Nothing -> Nothing
-    in ProductModel (productId prod) shopModel (productName prod) (productPrice prod) (productColor prod)
+    in ProductModel {
+        productModelId = productId prod,
+        productModelShop = shopModel,
+        productModelName = productName prod,
+        productModelPrice = productPrice prod,
+        productModelColor = productColor prod
+    }
 
 mapOrderToModel :: Order -> Maybe Customer -> Maybe [Product] -> OrderModel
 mapOrderToModel ord maybeCustomer maybeProducts =
@@ -88,7 +90,13 @@ mapModelToShop shopModel = Shop {
 mapModelToProduct :: ProductModel -> Product
 mapModelToProduct productModel =
     let spId = shopModelId <$> productModelShop productModel
-    in Product (productModelId productModel) (fromMaybe (-1) spId) (productModelName productModel) (productModelPrice productModel) (productModelColor productModel)
+    in Product {
+        productId = productModelId productModel,
+        productShopId = fromMaybe (-1) spId,
+        productName = productModelName productModel,
+        productPrice = productModelPrice productModel,
+        productColor = productModelColor productModel
+    }
 
 mapModelToOrder :: OrderModel -> Order
 mapModelToOrder orderModel =
@@ -97,4 +105,4 @@ mapModelToOrder orderModel =
             orderId = orderModelId orderModel,
             orderCustomerId = fromMaybe (-1) ordId,
             orderNumber = orderModelNumber orderModel
-        }
+    }

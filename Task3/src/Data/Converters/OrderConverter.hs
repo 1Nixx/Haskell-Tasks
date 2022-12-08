@@ -12,3 +12,4 @@ instance ReadWriteEntity Order where
             orderNumber = x3
         }
     writeEntity ord = show (orderId ord) ++ "|" ++ show (orderCustomerId ord) ++ "|" ++ orderNumber ord
+    

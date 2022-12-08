@@ -12,7 +12,7 @@ applyFilter arrSelect searchModelSelect funcfilter searchModel arr =
     in searchInArr maybeSearchValue  
     where
         searchInArr :: Maybe b  -> [a]
-        searchInArr (Just value)  = filter (funcfilter value . arrSelect) arr
+        searchInArr (Just value) = filter (funcfilter value . arrSelect) arr
         searchInArr Nothing = arr
 
 applyPagination :: Int -> Int -> [a] -> [a]
