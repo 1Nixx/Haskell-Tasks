@@ -1,18 +1,20 @@
 {-# OPTIONS_GHC -Wno-redundant-constraints #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
-module Repositories.FilterApplier 
+module Repositories.FilterApplier
     ( applyFilter
     , applyPagination) where
 import Data.SearchModels (SearchModel(..))
 
-applyFilter ::(SearchModel c) => (a -> b) -> (c -> Maybe b) -> (b -> b -> Bool) -> c -> [a] -> [a]
+applyFilter :: forall a b c. (SearchModel c) => (a -> b) -> (c -> Maybe b) -> (b -> b -> Bool) -> c -> [a] -> [a]
 applyFilter arrSelect searchModelSelect funcfilter searchModel arr =
     let maybeSearchValue = searchModelSelect searchModel
-    in searchInArr maybeSearchValue
+    in searchInArr maybeSearchValue  
     where
-        searchInArr (Just value) = filter (funcfilter value . arrSelect) arr
+        searchInArr :: Maybe b  -> [a]
+        searchInArr (Just value)  = filter (funcfilter value . arrSelect) arr
         searchInArr Nothing = arr
 
 applyPagination :: Int -> Int -> [a] -> [a]
-applyPagination page pageSize = 
+applyPagination page pageSize =
     take pageSize . drop ((page - 1) * pageSize)
