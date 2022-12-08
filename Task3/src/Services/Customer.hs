@@ -18,19 +18,18 @@ import Mappings.Mappings (mapCustomerToModel, mapModelToCutomer)
 import Data.SearchModels (CustomerSearchModel(..))
 import Repositories.FilterApplier (applyFilter)
 import Data.List (isInfixOf)
+import Utils.Utils (unwrap)
 
 getCustomers :: IO [CustomerModel]
 getCustomers = map (\o -> mapCustomerToModel o Nothing Nothing) <$> getList
 
 getCustomer :: Int -> IO (Maybe CustomerModel)
 getCustomer custId =
-    get custId >>= getCustomerModel
-    where
-        getCustomerModel Nothing = return Nothing
-        getCustomerModel (Just value) =
-            let orders = OrderRep.getOrdersByCustomerId custId
+    unwrap $ get custId >>= \maybeCustomer -> 
+        return (maybeCustomer >>= \customer -> 
+            let orders = OrderRep.getOrdersByCustomerId custId 
                 prodWithIds = ProductRep.getProductsWithOrdersId
-            in (\ord prodId -> Just . mapCustomerToModel value (Just ord) . Just $ prodId) <$> orders <*> prodWithIds
+            in  return $ (\ord prodId -> Just . mapCustomerToModel customer (Just ord) . Just $ prodId) <$> orders <*> prodWithIds)
 
 addCustomer :: CustomerModel -> IO Int
 addCustomer customer =

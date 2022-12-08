@@ -17,18 +17,17 @@ import Data.Entities (Shop (shopName, shopAddress))
 import Data.SearchModels (ShopSearchModel(..))
 import Repositories.FilterApplier (applyFilter)
 import Data.List (isInfixOf)
+import Utils.Utils (unwrap)
 
 getShops :: IO [ShopModel]
 getShops = map (`mapShopToModel` Nothing) <$> getList
 
 getShop :: Int -> IO (Maybe ShopModel)
 getShop shopId =
-    get shopId >>= getShopModel
-    where
-        getShopModel Nothing = return Nothing
-        getShopModel (Just value) =
+    unwrap $ get shopId >>= \maybeShop ->
+        return (maybeShop >>= \shop ->
             let prodList = ProdRep.getProductsByShopId shopId
-            in Just . mapShopToModel value . Just <$> prodList
+            in return $ Just . mapShopToModel shop . Just <$> prodList)
 
 addShop :: ShopModel -> IO Int
 addShop shop =
