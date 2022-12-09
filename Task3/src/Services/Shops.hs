@@ -10,7 +10,7 @@ module Services.Shops
     , searchShops) where
 
 import Data.Models (ShopModel)
-import Mappings.Mappings (mapShopToModel, mapModelToShop)
+import Mappings.Mappings (mapShopToMode)
 import qualified Repositories.ProductRepository as ProdRep
 import Repositories.GenericRepository.GenericRepository
 import Data.Entities (Shop (shopName, shopAddress))
