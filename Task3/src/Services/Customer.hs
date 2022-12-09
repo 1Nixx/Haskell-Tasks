@@ -14,7 +14,7 @@ import Data.Entities (Customer (..))
 import qualified Repositories.OrderRepository as OrderRep
 import qualified Repositories.ProductRepository as ProductRep
 import Repositories.GenericRepository.GenericRepository
-import Mappings.Mappings (mapCustomerToModel, mapModelToCutomer)
+import Mappings.Mappings (mapCustomerToModel)
 import Data.SearchModels (CustomerSearchModel(..))
 import Repositories.FilterApplier (applyFilter)
 import Data.List (isInfixOf)

@@ -1,8 +1,9 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Services.GenericService.OrderGenericService () where
 
 import Services.GenericService.GenericServiceClass (GenericService(..))
 import Data.Models (OrderModel)
 import Data.Entities (Order)
 
-instance GenericService Order OrderModel where
+instance GenericService Order OrderModel
