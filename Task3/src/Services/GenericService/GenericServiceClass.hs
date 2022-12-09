@@ -5,22 +5,23 @@
 
 module Services.GenericService.GenericServiceClass (GenericService(..)) where
 
+import Repositories.GenericRepository.GenericRepository as R
 import Mappings.Mappings (Mapping(..))
 import Data.RepositoryEntity.RepositoryEntity (RepositoryEntity(..))
-import Repositories.GenericRepository.GenericRepository as R
 import Data.SearchModels (SearchModel)
-import Services.SearchService (SearchService(searchFunc))
+import Services.SearchService (SearchService(..))
+import Data.ServiceEntity.ServiceEntity (ServiceEntity(..))
 
-class (RepositoryEntity a, Mapping a b, Mapping b a) => GenericService a b where
-    getList :: IO [b]
-    getList = map (\as -> toModel as :: b) <$> (R.getList :: IO a)
+class (RepositoryEntity a, ServiceEntity b) => GenericService a b where
+    getList :: (Mapping b a) => IO [b]
+    getList = map (\as -> toModel as) <$> (R.getList :: IO a)
 
-    add :: a -> IO Int
+    add :: b -> IO Int
     add model = 
         let model' = toModel model :: a
         in R.add model'
 
-    edit :: a -> IO ()
+    edit :: b -> IO ()
     edit model = 
         let model' = toModel model :: a
         in R.edit model'

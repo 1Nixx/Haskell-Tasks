@@ -62,7 +62,12 @@ library
       Repositories.OrderRepository
       Repositories.ProductRepository
       Services.Customer
+      Services.GenericService.CustomerGenericService
+      Services.GenericService.GenericService
       Services.GenericService.GenericServiceClass
+      Services.GenericService.OrderGenericService
+      Services.GenericService.ProductGenericService
+      Services.GenericService.ShopGenericService
       Services.Orders
       Services.Products
       Services.SearchService
