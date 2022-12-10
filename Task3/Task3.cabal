@@ -50,6 +50,7 @@ library
       Data.ServiceEntity.ServiceOrder
       Data.ServiceEntity.ServiceProduct
       Data.ServiceEntity.ServiceShop
+      Mappings.MappingParams
       Mappings.Mappings
       Repositories.FilterApplier
       Repositories.GenericRepository.CustomerGenericRepository
@@ -62,12 +63,7 @@ library
       Repositories.OrderRepository
       Repositories.ProductRepository
       Services.Customer
-      Services.GenericService.CustomerGenericService
-      Services.GenericService.GenericService
-      Services.GenericService.GenericServiceClass
-      Services.GenericService.OrderGenericService
-      Services.GenericService.ProductGenericService
-      Services.GenericService.ShopGenericService
+      Services.GenericService
       Services.Orders
       Services.Products
       Services.SearchService

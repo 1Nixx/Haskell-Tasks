@@ -1,12 +1,10 @@
+{-# LANGUAGE TypeApplications #-}
 module Main (main) where
 
-import qualified Services.Products as ProductService
-import qualified Services.Shops as ShopService
-import qualified Services.Customer as CustomerService
-import qualified Services.Orders as OrderService
-import Data.Models (CustomerModel(..), OrderModel (..))
+import Data.Models (CustomerModel(..), OrderModel (..), ProductModel (ProductModel), ShopModel (ShopModel))
+import qualified Services.GenericService as S
+import Data.Entities (Customer(Customer), Product (Product), Order(Order), Shop(Shop))
 import Data.SearchModels (CustomerSearchModel(..))
-import Data.Maybe (fromJust)
 
 main :: IO ()
 main = do
@@ -17,7 +15,7 @@ main = do
     }
 
     putStrLn "CustomerService ADD"
-    custId <- CustomerService.addCustomer testCust
+    custId <- S.add @Customer testCust 
     print custId
     putStrLn ""
 
@@ -27,51 +25,53 @@ main = do
     }
 
     putStrLn "CustomerService EDIT"
-    CustomerService.editCustomer editCust
+    S.edit @Customer editCust
 
     putStrLn "CustomerService DELETE"
-    CustomerService.deleteCustomer custId
+    res <- S.delete @Customer @CustomerModel custId
+    print res 
+    putStrLn ""
 
     putStrLn "CustomerService"
-    a <- CustomerService.getCustomer 2
+    a <- S.get @Customer @CustomerModel 2
     print a
     putStrLn ""
 
     putStrLn "OrderService"
-    b <- OrderService.getOrder 1
+    b <- S.get @Order @OrderModel 1
     print b
     putStrLn ""
 
     putStrLn "ProductService"
-    c <- ProductService.getProduct 2
+    c <- S.get @Product @ProductModel 2
     print c
     putStrLn ""
 
     putStrLn "ShopService"
-    d <- ShopService.getShop 2
+    d <- S.get @Shop @ShopModel 2
     print d
     putStrLn ""
 
-    prod1 <- ProductService.getProduct 2
-    prod2 <- ProductService.getProduct 3
+    -- prod1 <- S.get 2
+    -- prod2 <- ProductService.getProduct 3
 
-    cust <- CustomerService.getCustomer 3
+    -- cust <- CustomerService.getCustomer 3
 
-    let newOrd = OrderModel {
-            orderModelId = -1,
-            orderModelNumber = "tete",
-            orderModelCustomer = Just $ fromJust cust,
-            orderModelProducts = Just [fromJust prod1, fromJust prod2]     
-        }
+    -- let newOrd = OrderModel {
+    --         orderModelId = -1,
+    --         orderModelNumber = "tete",
+    --         orderModelCustomer = Just $ fromJust cust,
+    --         orderModelProducts = Just [fromJust prod1, fromJust prod2]     
+    --     }
 
-    putStrLn "OrderService ADD"
-    ordId <- OrderService.addOrder newOrd
-    print ordId
+    -- putStrLn "OrderService ADD"
+    -- ordId <- OrderService.addOrder newOrd
+    -- print ordId
 
-    putStrLn "OrderService"
-    ordNew <- OrderService.getOrder ordId
-    print ordNew
-    putStrLn ""
+    -- putStrLn "OrderService"
+    -- ordNew <- OrderService.getOrder ordId
+    -- print ordNew
+    -- putStrLn ""
 
     let searchModel = CustomerSearchModel {
         customerSearchModelName = Just "Nikita",
@@ -80,6 +80,6 @@ main = do
     }
 
     putStrLn "CustServiceSearch"
-    searchRes <- CustomerService.searchCustomers searchModel
+    searchRes <- S.search @Customer @CustomerModel searchModel
     print searchRes
     putStrLn ""
