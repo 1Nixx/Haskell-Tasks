@@ -8,12 +8,10 @@ import Repositories.GenericRepository.GenericRepository as R
 import Mappings.Mappings (Mapping(..))
 import Mappings.MappingParams (MappingParams(..))
 import Services.SearchService (SearchService(..))
-import Data.ServiceEntity ( ServiceEntity )
 import Data.Entities (Customer, Order, Product, Shop)
-import Data.Models (CustomerModel, OrderModel, ProductModel, ShopModel)
 import Utils.Utils (unwrap)
 
-class  (GenericRepository a, ServiceEntity b) => GenericService a b where
+class  (GenericRepository a) => GenericService a where
     getList :: (Mapping b a) => IO [b]
     getList = toList <$> (R.getList :: IO [a])
 
@@ -41,10 +39,10 @@ class  (GenericRepository a, ServiceEntity b) => GenericService a b where
     search :: (Mapping b a, SearchService c a) => c -> IO [b]
     search model = toList <$> (R.search searchFunc model :: IO [a])
 
-instance GenericService Customer CustomerModel
+instance GenericService Customer
 
-instance GenericService Order OrderModel
+instance GenericService Order
 
-instance GenericService Product ProductModel
+instance GenericService Product
 
-instance GenericService Shop ShopModel
+instance GenericService Shop

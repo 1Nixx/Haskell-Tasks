@@ -44,7 +44,6 @@ library
       Data.RepositoryEntity.RepositoryProductOrder
       Data.RepositoryEntity.RepositoryShop
       Data.SearchModels
-      Data.ServiceEntity
       Mappings.MappingParams
       Mappings.Mappings
       Repositories.FilterApplier

@@ -29,6 +29,11 @@ main = do
         customerModelName = "NeNikitaTest"
     }
 
+    putStrLn "CustomerService List"
+    list <- S.getList @Order @OrderModel
+    print list
+    putStrLn ""
+
     putStrLn "CustomerService EDIT"
     S.edit @Customer editCust
 
