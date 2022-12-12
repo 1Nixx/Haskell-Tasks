@@ -11,7 +11,7 @@ applyFilter arrSelect searchModelSelect funcfilter searchModel arr =
     let maybeSearchValue = searchModelSelect searchModel
     in searchInArr maybeSearchValue  
     where
-        searchInArr :: Maybe b  -> [a]
+        searchInArr :: Maybe b -> [a]
         searchInArr (Just value) = filter (funcfilter value . arrSelect) arr
         searchInArr Nothing = arr
 
