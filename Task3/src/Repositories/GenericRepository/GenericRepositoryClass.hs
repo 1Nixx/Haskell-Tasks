@@ -38,11 +38,13 @@ class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
         let name = entityString (entityName :: EntityName a)
         in  replaceLine name (writeEntity entity) (fromMaybe (-1) lineId)
 
-    delete :: Int -> IO ()
+    delete :: Int -> IO (Maybe a)
     delete enId =
         (getList :: IO [a]) <&> getListId enId >>= \lineId ->
+        get enId >>= \deletedEnt -> 
         let name = entityString (entityName :: EntityName a)
-        in deleteLine name (fromMaybe (-1) lineId)
+        in deleteLine name (fromMaybe (-1) lineId) >>
+        return deletedEnt
 
     search :: (SearchModel b) => (b -> [a] -> [a]) -> b -> IO [a]
     search filters filterModel =

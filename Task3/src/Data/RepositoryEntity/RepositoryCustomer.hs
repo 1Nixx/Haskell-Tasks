@@ -16,4 +16,3 @@ instance RepositoryEntity Customer where
     changeEntityId :: Customer -> Int -> Customer
     changeEntityId cs newId = cs {customerId = newId}
   
-    

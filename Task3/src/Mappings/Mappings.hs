@@ -1,100 +1,88 @@
-module Mappings.Mappings
-    ( mapProductToModel
-    , mapOrderToModel
-    , mapCustomerToModel
-    , mapShopToModel
-    , mapModelToCutomer
-    , mapModelToShop
-    , mapModelToProduct
-    , mapModelToOrder) where
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE InstanceSigs #-}
+module Mappings.Mappings (Mapping(..)) where
 
-import Data.Entities
-    ( Product(..)
-    , Shop(..)
-    , Order(..)
-    , productId
-    , productName
-    , productPrice
-    , productColor
-    , Customer(..))
-import Data.Models (ProductModel(..), ShopModel(..), OrderModel(..), CustomerModel (..), productModelShop, productModelId, productModelName, productModelPrice, productModelColor)
-import Utils.Utils (maybeHead)
+import Data.Entities (Product(..), Shop(..), Order(..), Customer(..))
+import Data.Models (ProductModel(..), ShopModel(..), OrderModel(..), CustomerModel (..))
 import Data.Maybe (fromMaybe)
 
-mapProductToModel :: Product -> Maybe Shop -> ProductModel
-mapProductToModel prod maybeShop =
-    let shopModel = case maybeShop of
-            Just value -> Just $ mapShopToModel value Nothing
-            Nothing -> Nothing
-    in ProductModel (productId prod) shopModel (productName prod) (productPrice prod) (productColor prod)
+class Mapping b a where
+    toModel :: a -> b
 
-mapOrderToModel :: Order -> Maybe Customer -> Maybe [Product] -> OrderModel
-mapOrderToModel ord maybeCustomer maybeProducts =
-    let customerModel = case maybeCustomer of
-            Just value -> Just $ mapCustomerToModel value Nothing Nothing
-            Nothing -> Nothing
-        productModel = case maybeProducts of
-            Just value -> Just $ map (`mapProductToModel` Nothing) value
-            Nothing -> Nothing
-    in OrderModel {
-        orderModelId = orderId ord,
-        orderModelNumber = orderNumber ord,
-        orderModelCustomer = customerModel,
-        orderModelProducts = productModel
+    toList :: [a] -> [b]
+    toList = map toModel
+
+instance Mapping ProductModel Product where
+    toModel :: Product -> ProductModel
+    toModel prod = ProductModel {
+        productModelId = productId prod,
+        productModelShop = Nothing,
+        productModelName = productName prod,
+        productModelPrice = productPrice prod,
+        productModelColor = productColor prod
     }
 
-mapCustomerToModel :: Customer -> Maybe [Order] -> Maybe [(Int, [Product])] -> CustomerModel
-mapCustomerToModel cust maybeOrders prodDict =
-    let orderModel = case maybeOrders of
-            Just orderV -> case prodDict of
-                    Just dict -> Just $ map (\o -> mapOrderToModel o Nothing (getProductsFromDict o dict)) orderV
-                    Nothing -> Just $ map (\o -> mapOrderToModel o Nothing Nothing) orderV
-            Nothing -> Nothing
-    in CustomerModel {
+instance Mapping OrderModel Order where
+    toModel :: Order -> OrderModel
+    toModel ord = OrderModel {
+        orderModelId = orderId ord,
+        orderModelNumber = orderNumber ord,
+        orderModelCustomer = Nothing,
+        orderModelProducts = Nothing
+    }
+
+instance Mapping CustomerModel Customer where
+    toModel :: Customer -> CustomerModel
+    toModel cust = CustomerModel {
         customerModelId = customerId cust,
         customerModelName = customerName cust,
         customerModelAddress = customerAddress cust,
-        customerModelOrders = orderModel
+        customerModelOrders = Nothing
     }
-    where getProductsFromDict order = maybeHead . map snd . filter (\x -> fst x == orderId order)
 
-
-mapShopToModel :: Shop -> Maybe [Product] -> ShopModel
-mapShopToModel sp maybeProduct =
-    let productModelList = case maybeProduct of
-            Just value -> Just $ map (`mapProductToModel` Nothing) value
-            Nothing -> Nothing
-    in ShopModel {
+instance Mapping ShopModel Shop where
+    toModel :: Shop -> ShopModel
+    toModel sp = ShopModel {
         shopModelId = shopId sp,
         shopModelName = shopName sp,
         shopModelAddress = shopAddress sp,
-        shopModelProducts = productModelList
-    }
+        shopModelProducts = Nothing
+    } 
 
-mapModelToCutomer :: CustomerModel -> Customer
-mapModelToCutomer customerModel = Customer {
+instance Mapping Product ProductModel where 
+    toModel :: ProductModel -> Product
+    toModel productModel =
+        let spId = shopModelId <$> productModelShop productModel
+        in Product {
+            productId = productModelId productModel,
+            productShopId = fromMaybe (-1) spId,
+            productName = productModelName productModel,
+            productPrice = productModelPrice productModel,
+            productColor = productModelColor productModel
+        }
+
+instance Mapping Order OrderModel where
+    toModel :: OrderModel -> Order
+    toModel orderModel =
+        let ordId = customerModelId <$> orderModelCustomer orderModel
+        in Order {
+            orderId = orderModelId orderModel,
+            orderCustomerId = fromMaybe (-1) ordId,
+            orderNumber = orderModelNumber orderModel
+        }
+
+instance Mapping Customer CustomerModel where
+    toModel :: CustomerModel -> Customer
+    toModel customerModel = Customer {
         customerId = customerModelId customerModel,
         customerName = customerModelName customerModel,
         customerAddress = customerModelAddress customerModel
     }
 
-mapModelToShop :: ShopModel -> Shop
-mapModelToShop shopModel = Shop {
+instance Mapping Shop ShopModel where
+    toModel :: ShopModel -> Shop
+    toModel shopModel = Shop {
         shopId = shopModelId shopModel,
         shopName = shopModelName shopModel,
         shopAddress = shopModelAddress shopModel
     }
-
-mapModelToProduct :: ProductModel -> Product
-mapModelToProduct productModel =
-    let spId = shopModelId <$> productModelShop productModel
-    in Product (productModelId productModel) (fromMaybe (-1) spId) (productModelName productModel) (productModelPrice productModel) (productModelColor productModel)
-
-mapModelToOrder :: OrderModel -> Order
-mapModelToOrder orderModel =
-    let ordId = customerModelId <$> orderModelCustomer orderModel
-    in Order {
-            orderId = orderModelId orderModel,
-            orderCustomerId = fromMaybe (-1) ordId,
-            orderNumber = orderModelNumber orderModel
-        }

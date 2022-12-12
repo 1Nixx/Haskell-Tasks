@@ -44,6 +44,7 @@ library
       Data.RepositoryEntity.RepositoryProductOrder
       Data.RepositoryEntity.RepositoryShop
       Data.SearchModels
+      Mappings.MappingParams
       Mappings.Mappings
       Repositories.FilterApplier
       Repositories.GenericRepository.CustomerGenericRepository
@@ -56,8 +57,10 @@ library
       Repositories.OrderRepository
       Repositories.ProductRepository
       Services.Customer
+      Services.GenericService
       Services.Orders
       Services.Products
+      Services.SearchService
       Services.Shops
       Utils.Files
       Utils.Utils

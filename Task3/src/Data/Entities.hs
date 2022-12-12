@@ -4,30 +4,17 @@ module Data.Entities
     , Order(..)
     , Product(..)
     , ProductOrder(..)
-    , productId
-    , productShopId
-    , productName
-    , productPrice
-    , productColor) where
+    ) where
 
 import Data.CommonEntity (Color)
 
-data Product = Product Int Int String Double Color    
-
-productId :: Product -> Int
-productId (Product prodId _ _ _ _) = prodId
-
-productShopId :: Product -> Int
-productShopId (Product _ prodShopId _ _ _) = prodShopId
-
-productName :: Product -> String
-productName (Product _ _ name _ _) = name
-
-productPrice :: Product -> Double
-productPrice (Product _ _ _ price _) = price
-
-productColor :: Product -> Color
-productColor (Product _ _ _ _ color) = color
+data Product = Product {
+    productId :: Int,
+    productShopId :: Int,
+    productName :: String,
+    productPrice :: Double,
+    productColor :: Color
+} 
 
 data Customer = Customer {
     customerId :: Int,

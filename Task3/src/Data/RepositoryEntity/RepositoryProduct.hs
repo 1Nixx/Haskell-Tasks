@@ -3,7 +3,7 @@
 {-# LANGUAGE InstanceSigs #-}
 module Data.RepositoryEntity.RepositoryProduct () where
 
-import Data.Entities (Product(..), productId, productShopId, productName, productPrice, productColor)
+import Data.Entities (Product(..))
 import Data.RepositoryEntity.RepositoryEntityClass (RepositoryEntity(..), EntityName (..))
 
 instance RepositoryEntity Product where
@@ -14,4 +14,5 @@ instance RepositoryEntity Product where
     entityName = EntityName "Products"
     
     changeEntityId :: Product -> Int -> Product
-    changeEntityId prod newId = Product newId (productShopId prod) (productName prod) (productPrice prod) (productColor prod)
+    changeEntityId prod newId = prod {productId = newId}
+    
