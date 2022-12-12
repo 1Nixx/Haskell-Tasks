@@ -5,6 +5,11 @@ import Data.Models (CustomerModel(..), OrderModel (..), ProductModel (ProductMod
 import qualified Services.GenericService as S
 import Data.Entities (Customer(Customer), Product (Product), Order(Order), Shop(Shop))
 import Data.SearchModels (CustomerSearchModel(..))
+import Services.Customer (getCustomer)
+import Services.Orders (getOrder)
+import Services.Products (getProduct)
+import Services.Shops (getShop)
+import Data.Maybe (fromJust)
 
 main :: IO ()
 main = do
@@ -33,45 +38,45 @@ main = do
     putStrLn ""
 
     putStrLn "CustomerService"
-    a <- S.get @Customer @CustomerModel 2
+    a <- getCustomer 2
     print a
     putStrLn ""
 
     putStrLn "OrderService"
-    b <- S.get @Order @OrderModel 1
+    b <- getOrder 1
     print b
     putStrLn ""
 
     putStrLn "ProductService"
-    c <- S.get @Product @ProductModel 2
+    c <- getProduct 2
     print c
     putStrLn ""
 
     putStrLn "ShopService"
-    d <- S.get @Shop @ShopModel 2
+    d <- getShop 2
     print d
     putStrLn ""
 
-    -- prod1 <- S.get 2
-    -- prod2 <- ProductService.getProduct 3
+    prod1 <- getProduct 2
+    prod2 <- getProduct 3
 
-    -- cust <- CustomerService.getCustomer 3
+    cust <- getCustomer 3
 
-    -- let newOrd = OrderModel {
-    --         orderModelId = -1,
-    --         orderModelNumber = "tete",
-    --         orderModelCustomer = Just $ fromJust cust,
-    --         orderModelProducts = Just [fromJust prod1, fromJust prod2]     
-    --     }
+    let newOrd = OrderModel {
+            orderModelId = -1,
+            orderModelNumber = "tete",
+            orderModelCustomer = Just $ fromJust cust,
+            orderModelProducts = Just [fromJust prod1, fromJust prod2]     
+        }
 
-    -- putStrLn "OrderService ADD"
-    -- ordId <- OrderService.addOrder newOrd
-    -- print ordId
+    putStrLn "OrderService ADD"
+    ordId <- S.add @Order newOrd
+    print ordId
 
-    -- putStrLn "OrderService"
-    -- ordNew <- OrderService.getOrder ordId
-    -- print ordNew
-    -- putStrLn ""
+    putStrLn "OrderService"
+    ordNew <- getOrder ordId
+    print ordNew
+    putStrLn ""
 
     let searchModel = CustomerSearchModel {
         customerSearchModelName = Just "Nikita",
