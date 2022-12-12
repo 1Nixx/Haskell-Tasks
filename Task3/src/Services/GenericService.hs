@@ -1,24 +1,28 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 
 module Services.GenericService (GenericService(..)) where
 
 import Repositories.GenericRepository.GenericRepository as R
 import Mappings.Mappings (Mapping(..))
+import Mappings.MappingParams (MappingParams(..))
 import Services.SearchService (SearchService(..))
-import Data.ServiceEntity.ServiceEntity
+import Data.ServiceEntity ( ServiceEntity )
 import Data.Entities (Customer, Order, Product, Shop)
 import Data.Models (CustomerModel, OrderModel, ProductModel, ShopModel)
+import Utils.Utils (unwrap)
 
 class  (GenericRepository a, ServiceEntity b) => GenericService a b where
     getList :: (Mapping b a) => IO [b]
     getList = toList <$> (R.getList :: IO [a])
 
-    get :: (Mapping b a) => Int -> IO (Maybe b)
-    get eid = (R.get eid :: IO (Maybe a)) >>= \maybeVal -> 
-        return (maybeVal >>= \val -> return(toModel val) )
+    get :: (MappingParams b a c) => (a -> IO c) -> Int -> IO (Maybe b)
+    get getParams eid = 
+        unwrap $ (R.get eid :: IO (Maybe a)) >>= \maybeVal -> 
+        return (maybeVal >>= \value -> 
+            let params = getParams value
+            in return $ Just . toModelP value <$> params)
 
     add :: (Mapping a b) => b -> IO Int
     add model =

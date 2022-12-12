@@ -44,12 +44,7 @@ library
       Data.RepositoryEntity.RepositoryProductOrder
       Data.RepositoryEntity.RepositoryShop
       Data.SearchModels
-      Data.ServiceEntity.ServiceCustomer
-      Data.ServiceEntity.ServiceEntity
-      Data.ServiceEntity.ServiceEntityClass
-      Data.ServiceEntity.ServiceOrder
-      Data.ServiceEntity.ServiceProduct
-      Data.ServiceEntity.ServiceShop
+      Data.ServiceEntity
       Mappings.MappingParams
       Mappings.Mappings
       Repositories.FilterApplier
