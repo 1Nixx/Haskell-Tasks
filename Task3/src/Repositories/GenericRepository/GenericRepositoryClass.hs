@@ -14,41 +14,42 @@ import Data.RepositoryEntity.RepositoryEntity
 import Data.Functor ((<&>))
 import Data.SearchModels (SearchModel(..))
 import Repositories.FilterApplier (applyPagination)
+import Data.App (App)
 
 class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
-    getList :: IO [a]
+    getList :: App [a]
     getList =
         readEntityFields (entityString (entityName :: EntityName a)) >>=
         mapM (return . readEntity)
 
-    get :: Int -> IO (Maybe a)
+    get :: Int -> App (Maybe a)
     get eid = maybeHead . filter (\a -> entityId a == eid) <$> getList
 
-    add :: a -> IO Int
+    add :: a -> App Int
     add entity =
-        ((getList :: IO [a]) <&> getUnicId) >>= \entId ->
+        ((getList :: App [a]) <&> getUnicId) >>= \entId ->
         let newEntity = changeEntityId entity entId
             name = entityString (entityName :: EntityName a)
         in  addLine name (writeEntity newEntity) >>
         return entId
 
-    edit :: a -> IO ()
+    edit :: a -> App ()
     edit entity =
-        (getList :: IO [a]) <&> getListId (entityId entity) >>= \lineId ->
+        (getList :: App [a]) <&> getListId (entityId entity) >>= \lineId ->
         let name = entityString (entityName :: EntityName a)
         in  replaceLine name (writeEntity entity) (fromMaybe (-1) lineId)
 
-    delete :: Int -> IO (Maybe a)
+    delete :: Int -> App (Maybe a)
     delete enId =
-        (getList :: IO [a]) <&> getListId enId >>= \lineId ->
+        (getList :: App [a]) <&> getListId enId >>= \lineId ->
         get enId >>= \deletedEnt -> 
         let name = entityString (entityName :: EntityName a)
         in deleteLine name (fromMaybe (-1) lineId) >>
         return deletedEnt
 
-    search :: (SearchModel b) => (b -> [a] -> [a]) -> b -> IO [a]
+    search :: (SearchModel b) => (b -> [a] -> [a]) -> b -> App [a]
     search filters filterModel =
-        let entities = getList :: IO [a]
+        let entities = getList :: App [a]
             pageNumber = getPageNumber filterModel
             pageSize = getPageSize filterModel
         in applyPagination pageNumber pageSize . filters filterModel <$> entities

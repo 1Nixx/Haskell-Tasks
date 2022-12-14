@@ -1,7 +1,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE InstanceSigs #-}
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
 module Mappings.MappingParams (MappingParams(..)) where
 

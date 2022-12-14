@@ -10,6 +10,7 @@ import Services.Orders (getOrder)
 import Services.Products (getProduct)
 import Services.Shops (getShop)
 import Data.Maybe (fromJust)
+import Data.App
 
 main :: IO ()
 main = do
@@ -20,7 +21,7 @@ main = do
     }
 
     putStrLn "CustomerService ADD"
-    custId <- S.add @Customer testCust 
+    custId <- runApp $ S.add @Customer testCust 
     print custId
     putStrLn ""
 
@@ -30,42 +31,42 @@ main = do
     }
 
     putStrLn "CustomerService List"
-    list <- S.getList @Order @OrderModel
+    list <- runApp $ S.getList @Order @OrderModel
     print list
     putStrLn ""
 
     putStrLn "CustomerService EDIT"
-    S.edit @Customer editCust
+    runApp $ S.edit @Customer editCust
 
     putStrLn "CustomerService DELETE"
-    res <- S.delete @Customer @CustomerModel custId
+    res <- runApp $ S.delete @Customer @CustomerModel custId
     print res 
     putStrLn ""
 
     putStrLn "CustomerService"
-    a <- getCustomer 2
+    a <- runApp $ getCustomer 2
     print a
     putStrLn ""
 
     putStrLn "OrderService"
-    b <- getOrder 1
+    b <- runApp $ getOrder 1
     print b
     putStrLn ""
 
     putStrLn "ProductService"
-    c <- getProduct 2
+    c <- runApp $ getProduct 2
     print c
     putStrLn ""
 
     putStrLn "ShopService"
-    d <- getShop 2
+    d <- runApp $ getShop 2
     print d
     putStrLn ""
 
-    prod1 <- getProduct 2
-    prod2 <- getProduct 3
+    prod1 <- runApp $ getProduct 2
+    prod2 <- runApp $ getProduct 3
 
-    cust <- getCustomer 3
+    cust <- runApp $ getCustomer 3
 
     let newOrd = OrderModel {
             orderModelId = -1,
@@ -75,11 +76,11 @@ main = do
         }
 
     putStrLn "OrderService ADD"
-    ordId <- S.add @Order newOrd
+    ordId <- runApp $ S.add @Order newOrd
     print ordId
 
     putStrLn "OrderService"
-    ordNew <- getOrder ordId
+    ordNew <- runApp $ getOrder ordId
     print ordNew
     putStrLn ""
 
@@ -90,6 +91,6 @@ main = do
     }
 
     putStrLn "CustServiceSearch"
-    searchRes <- S.search @Customer @CustomerModel searchModel
+    searchRes <- runApp $ S.search @Customer @CustomerModel searchModel
     print searchRes
     putStrLn ""

@@ -3,38 +3,39 @@ module Utils.Files (readEntityFields, deleteLine, addLine, replaceLine) where
 import System.IO
     ( hClose, hGetContents, openFile, IOMode(ReadMode) )
 import qualified Data.Text as Text
+import Data.App (App (Application))
 
-readEntityFromFile :: String -> IO String
+readEntityFromFile :: String -> App String
 readEntityFromFile entityName =
-    openFile (fileName entityName) ReadMode >>= \input -> 
+    Application $ openFile (fileName entityName) ReadMode >>= \input -> 
         hGetContents input >>= \text ->
         putStrLn text >>
         hClose input >>
         return text
 
-writeEntityToFile :: String -> String -> IO ()
-writeEntityToFile entityName = writeFile (fileName entityName)
+writeEntityToFile :: String -> String -> App ()
+writeEntityToFile entityName text = Application $ writeFile (fileName entityName) text
 
-readEntityFields :: String -> IO [[String]]
+readEntityFields :: String -> App [[String]]
 readEntityFields entityName =
     readEntityFromFile entityName >>=
     mapM (return . map Text.unpack . Text.split (=='|') . Text.pack ) . lines
 
-deleteLine :: String -> Int -> IO ()
+deleteLine :: String -> Int -> App ()
 deleteLine entityName lineInd =
     readEntityFromFile entityName >>= \text -> 
         let rows = lines text
             resultRows = unlines $ removeAt lineInd rows
         in writeEntityToFile entityName resultRows
 
-addLine :: String -> String -> IO ()
+addLine :: String -> String -> App ()
 addLine entityName line =
     readEntityFromFile entityName >>= \text -> 
         let rows = lines text
             resultRows = unlines (rows ++ [line])
         in writeEntityToFile entityName resultRows
 
-replaceLine :: String -> String -> Int -> IO ()
+replaceLine :: String -> String -> Int -> App ()
 replaceLine entityName line lineInd =
     readEntityFromFile entityName >>= \text -> 
         let rows = lines text

@@ -10,34 +10,35 @@ import Mappings.MappingParams (MappingParams(..))
 import Services.SearchService (SearchService(..))
 import Data.Entities (Customer, Order, Product, Shop)
 import Utils.Utils (unwrap)
+import Data.App (App)
 
 class  (GenericRepository a) => GenericService a where
-    getList :: (Mapping b a) => IO [b]
-    getList = toList <$> (R.getList :: IO [a])
+    getList :: (Mapping b a) => App [b]
+    getList = toList <$> (R.getList :: App [a])
 
-    get :: (MappingParams b a c) => (a -> IO c) -> Int -> IO (Maybe b)
+    get :: (MappingParams b a c) => (a -> App c) -> Int -> App (Maybe b)
     get getParams eid = 
-        unwrap $ (R.get eid :: IO (Maybe a)) >>= \maybeVal -> 
+        unwrap $ (R.get eid :: App (Maybe a)) >>= \maybeVal -> 
         return (maybeVal >>= \value -> 
             let params = getParams value
             in return $ Just . toModelP value <$> params)
 
-    add :: (Mapping a b) => b -> IO Int
+    add :: (Mapping a b) => b -> App Int
     add model =
         let model' = toModel model :: a
         in R.add model'
 
-    edit :: (Mapping a b) => b -> IO ()
+    edit :: (Mapping a b) => b -> App ()
     edit model =
         let model' = toModel model :: a
         in R.edit model'
 
-    delete :: (Mapping b a) => Int -> IO (Maybe b)
-    delete eid = (R.delete eid :: IO (Maybe a)) >>= \maybeVal -> 
+    delete :: (Mapping b a) => Int -> App (Maybe b)
+    delete eid = (R.delete eid :: App (Maybe a)) >>= \maybeVal -> 
         return (maybeVal >>= \val -> return (toModel val))
 
-    search :: (Mapping b a, SearchService c a) => c -> IO [b]
-    search model = toList <$> (R.search searchFunc model :: IO [a])
+    search :: (Mapping b a, SearchService c a) => c -> App [b]
+    search model = toList <$> (R.search searchFunc model :: App [a])
 
 instance GenericService Customer
 
