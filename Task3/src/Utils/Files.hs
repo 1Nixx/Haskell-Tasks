@@ -3,18 +3,19 @@ module Utils.Files (readEntityFields, deleteLine, addLine, replaceLine) where
 import System.IO
     ( hClose, hGetContents, openFile, IOMode(ReadMode) )
 import qualified Data.Text as Text
-import Data.App (App (Application))
+import Data.App (App (..))
+import Control.Monad.IO.Class (liftIO)
 
 readEntityFromFile :: String -> App String
 readEntityFromFile entityName =
-    Application $ openFile (fileName entityName) ReadMode >>= \input -> 
+    liftIO $ openFile (fileName entityName) ReadMode >>= \input -> 
         hGetContents input >>= \text ->
         putStrLn text >>
         hClose input >>
         return text
 
 writeEntityToFile :: String -> String -> App ()
-writeEntityToFile entityName text = Application $ writeFile (fileName entityName) text
+writeEntityToFile entityName text = liftIO $ writeFile (fileName entityName) text
 
 readEntityFields :: String -> App [[String]]
 readEntityFields entityName =

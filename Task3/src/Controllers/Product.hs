@@ -1,4 +1,5 @@
 {-# LANGUAGE TypeApplications #-}
+{-# OPTIONS_GHC -Wno-unused-do-bind #-}
 
 module Controllers.Product (getMany, getOne, process) where
 
@@ -27,9 +28,9 @@ process cid =
         processApp :: App ProductModel
         processApp = do
             maybeproduct <- getProduct cid
-            let product = fromJust maybeproduct
-            S.delete @Product @ProductModel (productModelId product)
-            added <- S.add @Product product
-            let editProduct = product { productModelId = added, productModelName = "My test product"}
+            let productEnt = fromJust maybeproduct
+            S.delete @Product @ProductModel (productModelId productEnt)
+            added <- S.add @Product productEnt
+            let editProduct = productEnt { productModelId = added, productModelName = "My test product"}
             S.edit @Product editProduct
             return editProduct

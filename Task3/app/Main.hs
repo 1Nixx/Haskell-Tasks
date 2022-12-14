@@ -21,7 +21,7 @@ main = do
     }
 
     putStrLn "CustomerService ADD"
-    custId <- runApp $ S.add @Customer testCust 
+    custId <- start $ S.add @Customer testCust 
     print custId
     putStrLn ""
 
@@ -31,42 +31,42 @@ main = do
     }
 
     putStrLn "CustomerService List"
-    list <- runApp $ S.getList @Order @OrderModel
+    list <- start $ S.getList @Order @OrderModel
     print list
     putStrLn ""
 
     putStrLn "CustomerService EDIT"
-    runApp $ S.edit @Customer editCust
+    start $ S.edit @Customer editCust
 
     putStrLn "CustomerService DELETE"
-    res <- runApp $ S.delete @Customer @CustomerModel custId
+    res <- start $ S.delete @Customer @CustomerModel custId
     print res 
     putStrLn ""
 
     putStrLn "CustomerService"
-    a <- runApp $ getCustomer 2
+    a <- start $ getCustomer 2
     print a
     putStrLn ""
 
     putStrLn "OrderService"
-    b <- runApp $ getOrder 1
+    b <- start $ getOrder 1
     print b
     putStrLn ""
 
     putStrLn "ProductService"
-    c <- runApp $ getProduct 2
+    c <- start $ getProduct 2
     print c
     putStrLn ""
 
     putStrLn "ShopService"
-    d <- runApp $ getShop 2
+    d <- start $ getShop 2
     print d
     putStrLn ""
 
-    prod1 <- runApp $ getProduct 2
-    prod2 <- runApp $ getProduct 3
+    prod1 <- start $ getProduct 2
+    prod2 <- start $ getProduct 3
 
-    cust <- runApp $ getCustomer 3
+    cust <- start $ getCustomer 3
 
     let newOrd = OrderModel {
             orderModelId = -1,
@@ -76,11 +76,11 @@ main = do
         }
 
     putStrLn "OrderService ADD"
-    ordId <- runApp $ S.add @Order newOrd
+    ordId <- start $ S.add @Order newOrd
     print ordId
 
     putStrLn "OrderService"
-    ordNew <- runApp $ getOrder ordId
+    ordNew <- start $ getOrder ordId
     print ordNew
     putStrLn ""
 
@@ -91,6 +91,6 @@ main = do
     }
 
     putStrLn "CustServiceSearch"
-    searchRes <- runApp $ S.search @Customer @CustomerModel searchModel
+    searchRes <- start $ S.search @Customer @CustomerModel searchModel
     print searchRes
     putStrLn ""
