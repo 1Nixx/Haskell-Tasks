@@ -1,7 +1,4 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# OPTIONS_GHC -Wno-unused-top-binds #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use newtype instead of data" #-}
 {-# OPTIONS_GHC -Wno-partial-fields #-}
 
 module Data.App (App(..), AppResult(..), AppConfig(..), AppState(..), AppError(..), AppLog, start) where
@@ -25,8 +22,6 @@ newtype App a = App {
 data AppResult a = AppResult { appResult :: a }
                  | AppError { message :: String }
                 deriving (Show)
-
---type AppResult a = Either AppError a
 
 start :: App a -> IO (AppResult a)
 start app =
