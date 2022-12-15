@@ -8,14 +8,13 @@ import Data.Entities (Customer)
 import qualified Services.GenericService as S
 import Services.Customer (getCustomer)
 import Data.App (AppResult, App, start)
-import Data.Maybe (fromJust)
 
 getMany :: IO (AppResult [CustomerModel])
 getMany = 
     let app = S.getList @Customer
     in start app
 
-getOne :: Int -> IO (AppResult (Maybe CustomerModel))
+getOne :: Int -> IO (AppResult CustomerModel)
 getOne cid = 
     let app = getCustomer cid
     in start app
@@ -27,8 +26,7 @@ process cid =
     where
         processApp :: App CustomerModel
         processApp = do
-            maybecustomer <- getCustomer cid
-            let customer = fromJust maybecustomer
+            customer <- getCustomer cid
             S.delete @Customer @CustomerModel (customerModelId customer)
             added <- S.add @Customer customer
             let editCustomer = customer { customerModelId = added, customerModelName = "My test customer"}

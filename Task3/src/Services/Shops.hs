@@ -6,7 +6,7 @@ import qualified Services.GenericService as S
 import qualified Repositories.ProductRepository as ProdRep
 import Data.App (App)
 
-getShop :: Int -> App (Maybe ShopModel)
+getShop :: Int -> App ShopModel
 getShop =
     S.get getProducts
     where

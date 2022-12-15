@@ -8,14 +8,13 @@ import Data.Entities (Shop)
 import qualified Services.GenericService as S
 import Data.App (AppResult, App, start)
 import Services.Shops (getShop)
-import Data.Maybe (fromJust)
 
 getMany :: IO (AppResult [ShopModel])
 getMany = 
     let app = S.getList @Shop
     in start app
 
-getOne :: Int -> IO (AppResult (Maybe ShopModel))
+getOne :: Int -> IO (AppResult ShopModel)
 getOne cid = 
     let app = getShop cid
     in start app
@@ -27,8 +26,7 @@ process cid =
     where
         processApp :: App ShopModel
         processApp = do
-            maybeshop <- getShop cid
-            let shop = fromJust maybeshop
+            shop <- getShop cid
             S.delete @Shop @ShopModel (shopModelId shop)
             added <- S.add @Shop shop
             let editShop = shop { shopModelId = added, shopModelName = "My test shop"}

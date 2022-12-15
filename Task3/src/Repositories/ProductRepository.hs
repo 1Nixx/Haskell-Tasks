@@ -6,14 +6,13 @@ module Repositories.ProductRepository
     , getProductsWithOrdersId) where
 
 import Data.Entities (Product(..), productShopId, ProductOrder (..), Order(..))
-import Data.Maybe (fromJust)
 import Repositories.GenericRepository.GenericRepository
 import Data.App (App)
 
 getProductsByOrderId :: Int -> App [Product]
 getProductsByOrderId searchOrderId =
     getList >>= \productOrders ->
-    mapM (fmap fromJust . get . prodFKId) $ filter (\ a -> orderFKId a == searchOrderId) productOrders
+    mapM (get . prodFKId) $ filter (\ a -> orderFKId a == searchOrderId) productOrders
 
 getProductsByShopId :: Int -> App [Product]
 getProductsByShopId searchShopId = filter (\ a -> productShopId a == searchShopId) <$> getList

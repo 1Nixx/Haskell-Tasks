@@ -7,7 +7,7 @@ import qualified Repositories.ProductRepository as ProductRep
 import qualified Services.GenericService as S
 import Data.App (App)
 
-getCustomer :: Int -> App (Maybe CustomerModel)
+getCustomer :: Int -> App CustomerModel
 getCustomer =
     S.get getParams
     where

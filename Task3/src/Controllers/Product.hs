@@ -8,14 +8,13 @@ import Data.Entities (Product)
 import qualified Services.GenericService as S
 import Services.Products (getProduct)
 import Data.App (AppResult, App, start)
-import Data.Maybe (fromJust)
 
 getMany :: IO (AppResult [ProductModel])
 getMany = 
     let app = S.getList @Product
     in start app
 
-getOne :: Int -> IO (AppResult (Maybe ProductModel))
+getOne :: Int -> IO (AppResult ProductModel)
 getOne cid = 
     let app = getProduct cid
     in start app
@@ -27,8 +26,7 @@ process cid =
     where
         processApp :: App ProductModel
         processApp = do
-            maybeproduct <- getProduct cid
-            let productEnt = fromJust maybeproduct
+            productEnt <- getProduct cid
             S.delete @Product @ProductModel (productModelId productEnt)
             added <- S.add @Product productEnt
             let editProduct = productEnt { productModelId = added, productModelName = "My test product"}
