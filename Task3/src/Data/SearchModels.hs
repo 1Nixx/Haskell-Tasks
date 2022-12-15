@@ -12,8 +12,6 @@ import Data.CommonEntity (Color)
 
 class SearchModel a where 
     getPageNumber :: a -> Int
-    getPageSize :: a -> Int
-    getPageSize _ = 5
 
 instance SearchModel ProductSearchModel where
     getPageNumber :: ProductSearchModel -> Int

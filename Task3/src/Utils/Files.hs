@@ -3,19 +3,23 @@ module Utils.Files (readEntityFields, deleteLine, addLine, replaceLine) where
 import System.IO
     ( hClose, hGetContents, openFile, IOMode(ReadMode) )
 import qualified Data.Text as Text
-import Data.App (App (..))
+import Data.App (App (..), AppConfig (filePath))
 import Control.Monad.IO.Class (liftIO)
+import Control.Monad.Reader (MonadReader(ask))
 
 readEntityFromFile :: String -> App String
 readEntityFromFile entityName =
-    liftIO $ openFile (fileName entityName) ReadMode >>= \input -> 
+    ask >>= \config ->
+    liftIO $ openFile (fileName (filePath config) entityName) ReadMode >>= \input -> 
         hGetContents input >>= \text ->
         putStrLn text >>
         hClose input >>
         return text
 
 writeEntityToFile :: String -> String -> App ()
-writeEntityToFile entityName text = liftIO $ writeFile (fileName entityName) text
+writeEntityToFile entityName text = 
+    ask >>= \config ->
+    liftIO $ writeFile (fileName (filePath config) entityName) text
 
 readEntityFields :: String -> App [[String]]
 readEntityFields entityName =
@@ -43,8 +47,8 @@ replaceLine entityName line lineInd =
             resultRows = unlines $ replaceAt lineInd line rows
         in writeEntityToFile entityName resultRows
 
-fileName :: String -> String
-fileName entityName = "src/Files/" ++ entityName ++ ".txt"
+fileName :: String -> String -> String
+fileName path entityName = path ++ entityName ++ ".txt"
 
 removeAt :: Int -> [a] -> [a]
 removeAt pos xs'@(x:xs)
