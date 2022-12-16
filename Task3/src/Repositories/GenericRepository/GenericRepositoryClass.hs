@@ -24,72 +24,76 @@ import Utils.Utils (validateArr, validateMaybe)
 class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a) => GenericRepository a where
     getList :: App [a]
     getList =
-        tell ["getList: starting"] >>
+        let entName = entityString (entityName :: EntityName a)
+        in tell [entName ++ " getList - starting"] >>
         S.get >>= \state ->
         let cacheData = getCache state :: [a]
-        in getData (not (null cacheData)) state cacheData >>= \result ->
-        tell ["getList: completed"] >>
+        in getData (not (null cacheData)) state cacheData entName >>= \result ->
+        tell [entName ++ " getList - completed"] >>
         return result
         where
-            getData :: Bool -> AppState -> [a] -> App [a]
-            getData True _ cache = return cache 
-            getData False state _ = 
-                (readEntityFields (entityString (entityName :: EntityName a)) >>= \fields ->
-                mapM (return . readEntity) fields) >>= \arr -> 
+            getData :: Bool -> AppState -> [a] -> String -> App [a]
+            getData True _ cache _ = return cache
+            getData False state _ entName =
+                (readEntityFields entName >>= \fields ->
+                mapM (return . readEntity) fields) >>= \arr ->
                 let newState = setCache state arr
                 in S.put newState >>
-                return arr 
+                return arr
 
     get :: Int -> App a
     get eid =
-        tell ["get: starting"] >>
+        let entName = entityString (entityName :: EntityName a)
+        in tell [entName ++ " get id: " ++ show eid ++ " - starting"] >>
         filter (\a -> entityId a == eid) <$> getList >>= \entityArr ->
-        validateArr entityArr >>= \result -> 
-        tell ["get: completed"] >>
+        validateArr eid entName entityArr >>= \result ->
+        tell [entName ++ " get id: " ++ show eid ++ " - completed"] >>
         return result
 
     add :: a -> App Int
     add entity =
-        tell ["add: starting"] >>
+        let entName = entityString (entityName :: EntityName a)
+        in tell [entName ++ " add new - starting"] >>
         ((getList :: App [a]) <&> getUnicId) >>= \entId ->
         let newEntity = changeEntityId entity entId
-            name = entityString (entityName :: EntityName a)
-        in  addLine name (writeEntity newEntity) >>
-        tell ["add: completed"] >>
+        in  addLine entName (writeEntity newEntity) >>
+        tell [entName ++ "add new id: " ++ show entId ++ " - completed"] >>
         clearCache @a >>
         return entId
 
     edit :: a -> App ()
     edit entity =
-        tell ["edit: starting"] >>
-        (getList :: App [a]) <&> getListId (entityId entity) >>= \maybeLineId ->
-        validateMaybe maybeLineId >>= \lineId -> 
-        let name = entityString (entityName :: EntityName a)
-        in  replaceLine name (writeEntity entity) lineId >>
-        tell ["edit: completed"] >>
+        let entName = entityString (entityName :: EntityName a)
+            eid = entityId entity
+        in tell [entName ++ " edit id: " ++ show eid ++ " - starting"] >>
+        (getList :: App [a]) <&> getListId eid >>= \maybeLineId ->
+        validateMaybe eid entName maybeLineId >>= \lineId ->
+        replaceLine entName (writeEntity entity) lineId >>
+        tell [entName ++ " edit id: " ++ show eid ++ " - completed"] >>
         clearCache @a
 
     delete :: Int -> App a
     delete enId =
-        tell ["delete: starting"] >>
+        let entName = entityString (entityName :: EntityName a)
+        in tell [entName ++ " delete id: " ++ show enId ++" - starting"] >>
         (getList :: App [a]) <&> getListId enId >>= \maybeLineId ->
-        validateMaybe maybeLineId >>= \lineId -> 
+        validateMaybe enId entName maybeLineId >>= \lineId ->
         get enId >>= \deletedEnt ->
-        let name = entityString (entityName :: EntityName a)
-        in deleteLine name lineId >>
-        tell ["delete: completed"] >>
+        deleteLine entName lineId >>
+        tell [entName ++ " delete id: " ++ show enId ++ " - completed"] >>
         clearCache @a >>
         return deletedEnt
 
     search :: (SearchModel b) => (b -> [a] -> [a]) -> b -> App [a]
     search filters filterModel =
-        tell ["search: starting"] >>
+        let entName = entityString (entityName :: EntityName a)
+        in tell [entName ++ " search - starting"] >>
         ask >>= \config ->
         let entities = getList :: App [a]
             pageNumber = getPageNumber filterModel
             pageSizeN = pageSize config
         in applyPagination pageNumber pageSizeN . filters filterModel <$> entities >>= \result ->
-        tell ["search: completed"] >>
+        tell [entName ++ " search - completed"] >>
         return result
 
 getUnicId :: (RepositoryEntity a) => [a] -> Int

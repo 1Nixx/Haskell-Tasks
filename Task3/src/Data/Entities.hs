@@ -14,28 +14,28 @@ data Product = Product {
     productName :: String,
     productPrice :: Double,
     productColor :: Color
-} 
+} deriving (Show)
 
 data Customer = Customer {
     customerId :: Int,
     customerName :: String,
     customerAddress :: String
-}        
+} deriving (Show)         
 
 data Shop = Shop {
     shopId :: Int,
     shopName :: String,
     shopAddress :: String
-}
+} deriving (Show)
 
 data Order = Order {
     orderId :: Int,
     orderCustomerId :: Int,
     orderNumber :: String
-}
+} deriving (Show)
 
 data ProductOrder = ProductOrder {
     productOrderId :: Int,
     orderFKId :: Int,
     prodFKId :: Int
-}
+} deriving (Show)
