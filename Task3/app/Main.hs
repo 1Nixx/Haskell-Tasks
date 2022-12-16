@@ -1,95 +1,62 @@
-{-# LANGUAGE TypeApplications #-}
 module Main (main) where
 
-import Data.Models (CustomerModel(..), OrderModel (..), ProductModel (ProductModel), ShopModel (ShopModel))
-import qualified Services.GenericService as S
-import Data.Entities (Customer(Customer), Product (Product), Order(Order), Shop(Shop))
-import Data.SearchModels (CustomerSearchModel(..))
-import Services.Customer (getCustomer)
-import Services.Orders (getOrder)
-import Services.Products (getProduct)
-import Services.Shops (getShop)
-import Data.Maybe (fromJust)
+import qualified Controllers.Customer as CC
+import qualified Controllers.Order as CO
+import qualified Controllers.Product as CP
+import qualified Controllers.Shop as CS
+import Data.App (AppResult(result))
 
 main :: IO ()
 main = do
-    let testCust = CustomerModel {
-        customerModelId = 0, 
-        customerModelName = "NikitaTest",
-        customerModelAddress = "GomelTest"
-    }
+    putStrLn "\nCUSTOMERS\n"
+    customers <- CC.getMany
+    
+    print $ result customers
 
-    putStrLn "CustomerService ADD"
-    custId <- S.add @Customer testCust 
-    print custId
-    putStrLn ""
+    putStrLn "\nCUSTOMER #2\n"
+    customer <- CC.getOne 2
+    print $ result customer
 
-    let editCust = testCust {
-        customerModelId = 2,
-        customerModelName = "NeNikitaTest"
-    }
+    putStrLn "\nORDERS\n"
+    orders <- CO.getMany
+    print $ result orders
 
-    putStrLn "CustomerService List"
-    list <- S.getList @Order @OrderModel
-    print list
-    putStrLn ""
+    putStrLn "\nORDER #1\n"
+    order <- CO.getOne 1
+    print $ result order
 
-    putStrLn "CustomerService EDIT"
-    S.edit @Customer editCust
+    putStrLn "\nPRODUCTS\n"
+    products <- CP.getMany
+    print $ result products
 
-    putStrLn "CustomerService DELETE"
-    res <- S.delete @Customer @CustomerModel custId
-    print res 
-    putStrLn ""
+    putStrLn "\nPRODUCT #2\n"
+    product <- CP.getOne 2
+    print $ result product
 
-    putStrLn "CustomerService"
-    a <- getCustomer 2
-    print a
-    putStrLn ""
+    putStrLn "\nSHOPS\n"
+    customers <- CS.getMany
+    print $ result customers
 
-    putStrLn "OrderService"
-    b <- getOrder 1
-    print b
-    putStrLn ""
+    putStrLn "\nSHOP #2\n"
+    customer <- CS.getOne 2
+    print $ result customer
 
-    putStrLn "ProductService"
-    c <- getProduct 2
-    print c
-    putStrLn ""
+    putStrLn "\nORDER #10 ERROR\n"
+    order <- CO.getOne 10
+    print $ result order
 
-    putStrLn "ShopService"
-    d <- getShop 2
-    print d
-    putStrLn ""
+    putStrLn "\nCUSTOMER #4 PROCESS\n"
+    custResult <- CC.process 4
+    print $ result custResult
 
-    prod1 <- getProduct 2
-    prod2 <- getProduct 3
+    putStrLn "\nORDER #2 PROCESS\n"
+    ordResult <- CO.process 2
+    print $ result ordResult
 
-    cust <- getCustomer 3
+    putStrLn "\nPRODUCT #2 PROCESS\n"
+    prodResult <- CP.process 2
+    print $ result prodResult
 
-    let newOrd = OrderModel {
-            orderModelId = -1,
-            orderModelNumber = "tete",
-            orderModelCustomer = Just $ fromJust cust,
-            orderModelProducts = Just [fromJust prod1, fromJust prod2]     
-        }
-
-    putStrLn "OrderService ADD"
-    ordId <- S.add @Order newOrd
-    print ordId
-
-    putStrLn "OrderService"
-    ordNew <- getOrder ordId
-    print ordNew
-    putStrLn ""
-
-    let searchModel = CustomerSearchModel {
-        customerSearchModelName = Just "Nikita",
-        customerSearchModelAddress = Nothing,
-        customerSearchModelPage = 3
-    }
-
-    putStrLn "CustServiceSearch"
-    searchRes <- S.search @Customer @CustomerModel searchModel
-    print searchRes
-    putStrLn ""
+    putStrLn "\nSHOP #3 PROCESS\n"
+    shopResult <- CS.process 3
+    print $ result shopResult

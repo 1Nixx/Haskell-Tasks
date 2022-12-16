@@ -5,12 +5,13 @@ import Data.Entities (Customer (customerId), Order, Product)
 import qualified Repositories.OrderRepository as OrderRep
 import qualified Repositories.ProductRepository as ProductRep
 import qualified Services.GenericService as S
+import Data.App (App)
 
-getCustomer :: Int -> IO (Maybe CustomerModel)
+getCustomer :: Int -> App CustomerModel
 getCustomer =
     S.get getParams
     where
-        getParams :: Customer -> IO (Maybe [Order], Maybe [(Int, [Product])])
+        getParams :: Customer -> App (Maybe [Order], Maybe [(Int, [Product])])
         getParams customer =
             OrderRep.getOrdersByCustomerId (customerId customer) >>= \orders -> 
             ProductRep.getProductsWithOrdersId >>= \prodWithIds ->

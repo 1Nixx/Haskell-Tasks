@@ -1,57 +1,100 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Redundant <&>" #-}
+{-# HLINT ignore "Redundant <$>" #-}
+{-# LANGUAGE TypeApplications #-}
+{-# HLINT ignore "Use >=>" #-}
 
 module Repositories.GenericRepository.GenericRepositoryClass (GenericRepository(..)) where
 
 import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
-import Utils.Utils (maybeHead)
 import Data.List (findIndex)
-import Data.Maybe (fromMaybe)
 import Data.Converters.Converter
 import Data.RepositoryEntity.RepositoryEntity
 import Data.Functor ((<&>))
 import Data.SearchModels (SearchModel(..))
 import Repositories.FilterApplier (applyPagination)
+import Data.App (App, AppConfig (pageSize), AppState)
+import Control.Monad.Writer (MonadWriter(tell))
+import Control.Monad.Reader (MonadReader(ask))
+import qualified Control.Monad.State as S
+import Utils.Cache
+import Utils.Utils (validateArr, validateMaybe)
 
-class (ReadWriteEntity a, RepositoryEntity a) => GenericRepository a where
-    getList :: IO [a]
+class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a) => GenericRepository a where
+    getList :: App [a]
     getList =
-        readEntityFields (entityString (entityName :: EntityName a)) >>=
-        mapM (return . readEntity)
+        let entName = entityString (entityName :: EntityName a)
+        in tell [entName ++ " getList - starting"] >>
+        S.get >>= \state ->
+        let cacheData = getCache state :: [a]
+        in getData (not (null cacheData)) state cacheData entName >>= \result ->
+        tell [entName ++ " getList - completed"] >>
+        return result
+        where
+            getData :: Bool -> AppState -> [a] -> String -> App [a]
+            getData True _ cache _ = return cache
+            getData False state _ entName =
+                (readEntityFields entName >>= \fields ->
+                mapM (return . readEntity) fields) >>= \arr ->
+                let newState = setCache state arr
+                in S.put newState >>
+                return arr
 
-    get :: Int -> IO (Maybe a)
-    get eid = maybeHead . filter (\a -> entityId a == eid) <$> getList
+    get :: Int -> App a
+    get eid =
+        let entName = entityString (entityName :: EntityName a)
+        in tell [entName ++ " get id: " ++ show eid ++ " - starting"] >>
+        filter (\a -> entityId a == eid) <$> getList >>= \entityArr ->
+        validateArr eid entName entityArr >>= \result ->
+        tell [entName ++ " get id: " ++ show eid ++ " - completed"] >>
+        return result
 
-    add :: a -> IO Int
+    add :: a -> App Int
     add entity =
-        ((getList :: IO [a]) <&> getUnicId) >>= \entId ->
+        let entName = entityString (entityName :: EntityName a)
+        in tell [entName ++ " add new - starting"] >>
+        ((getList :: App [a]) <&> getUnicId) >>= \entId ->
         let newEntity = changeEntityId entity entId
-            name = entityString (entityName :: EntityName a)
-        in  addLine name (writeEntity newEntity) >>
+        in  addLine entName (writeEntity newEntity) >>
+        tell [entName ++ "add new id: " ++ show entId ++ " - completed"] >>
+        clearCache @a >>
         return entId
 
-    edit :: a -> IO ()
+    edit :: a -> App ()
     edit entity =
-        (getList :: IO [a]) <&> getListId (entityId entity) >>= \lineId ->
-        let name = entityString (entityName :: EntityName a)
-        in  replaceLine name (writeEntity entity) (fromMaybe (-1) lineId)
+        let entName = entityString (entityName :: EntityName a)
+            eid = entityId entity
+        in tell [entName ++ " edit id: " ++ show eid ++ " - starting"] >>
+        (getList :: App [a]) <&> getListId eid >>= \maybeLineId ->
+        validateMaybe eid entName maybeLineId >>= \lineId ->
+        replaceLine entName (writeEntity entity) lineId >>
+        tell [entName ++ " edit id: " ++ show eid ++ " - completed"] >>
+        clearCache @a
 
-    delete :: Int -> IO (Maybe a)
+    delete :: Int -> App a
     delete enId =
-        (getList :: IO [a]) <&> getListId enId >>= \lineId ->
-        get enId >>= \deletedEnt -> 
-        let name = entityString (entityName :: EntityName a)
-        in deleteLine name (fromMaybe (-1) lineId) >>
+        let entName = entityString (entityName :: EntityName a)
+        in tell [entName ++ " delete id: " ++ show enId ++" - starting"] >>
+        (getList :: App [a]) <&> getListId enId >>= \maybeLineId ->
+        validateMaybe enId entName maybeLineId >>= \lineId ->
+        get enId >>= \deletedEnt ->
+        deleteLine entName lineId >>
+        tell [entName ++ " delete id: " ++ show enId ++ " - completed"] >>
+        clearCache @a >>
         return deletedEnt
 
-    search :: (SearchModel b) => (b -> [a] -> [a]) -> b -> IO [a]
+    search :: (SearchModel b) => (b -> [a] -> [a]) -> b -> App [a]
     search filters filterModel =
-        let entities = getList :: IO [a]
+        let entName = entityString (entityName :: EntityName a)
+        in tell [entName ++ " search - starting"] >>
+        ask >>= \config ->
+        let entities = getList :: App [a]
             pageNumber = getPageNumber filterModel
-            pageSize = getPageSize filterModel
-        in applyPagination pageNumber pageSize . filters filterModel <$> entities
+            pageSizeN = pageSize config
+        in applyPagination pageNumber pageSizeN . filters filterModel <$> entities >>= \result ->
+        tell [entName ++ " search - completed"] >>
+        return result
 
 getUnicId :: (RepositoryEntity a) => [a] -> Int
 getUnicId xs = entityId (last xs) + 1
