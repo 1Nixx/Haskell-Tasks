@@ -1,13 +1,14 @@
 {-# LANGUAGE TypeApplications #-}
 {-# OPTIONS_GHC -Wno-unused-do-bind #-}
 
-module Controllers.Shop (getMany, getOne, process) where
+module Controllers.Shop (getMany, getOne, add, edit, delete, search) where
 
-import Data.Models (ShopModel (shopModelId, shopModelName))
+import Data.Models (ShopModel)
 import Data.Entities (Shop)
 import qualified Services.GenericService as S
-import Data.App (AppResult, App, start)
+import Data.App (AppResult, start)
 import Services.Shops (getShop)
+import Data.SearchModels
 
 getMany :: IO (AppResult [ShopModel])
 getMany = 
@@ -19,16 +20,22 @@ getOne cid =
     let app = getShop cid
     in start app
 
-process :: Int -> IO (AppResult ShopModel)
-process cid =
-    let app = processApp
+add :: ShopModel -> IO (AppResult Int)
+add model = 
+    let app = S.add @Shop model 
     in start app
-    where
-        processApp :: App ShopModel
-        processApp = do
-            shop <- getShop cid
-            S.delete @Shop @ShopModel (shopModelId shop)
-            added <- S.add @Shop shop
-            let editShop = shop { shopModelId = added, shopModelName = "My test shop"}
-            S.edit @Shop editShop
-            return editShop
+
+edit :: ShopModel -> IO (AppResult ())
+edit model = 
+    let app = S.edit @Shop model
+    in start app
+
+delete :: Int -> IO (AppResult ShopModel)
+delete eid = 
+    let app = S.delete @Shop eid
+    in start app
+
+search :: ShopSearchModel -> IO (AppResult [ShopModel])
+search sch =
+    let app = S.search @Shop sch
+    in start app

@@ -1,13 +1,13 @@
 {-# LANGUAGE TypeApplications #-}
-{-# OPTIONS_GHC -Wno-unused-do-bind #-}
 
-module Controllers.Order (getMany, getOne, process) where
+module Controllers.Order (getMany, getOne, add, edit, delete, search) where
 
-import Data.Models (OrderModel (orderModelId, orderModelNumber))
+import Data.Models (OrderModel)
 import Data.Entities (Order)
 import qualified Services.GenericService as S
 import Services.Orders (getOrder)
-import Data.App (AppResult, App, start)
+import Data.App (AppResult, start)
+import Data.SearchModels (OrderSearchModel)
 
 getMany :: IO (AppResult [OrderModel])
 getMany = 
@@ -19,16 +19,22 @@ getOne cid =
     let app = getOrder cid
     in start app
 
-process :: Int -> IO (AppResult OrderModel)
-process cid =
-    let app = processApp
+add :: OrderModel -> IO (AppResult Int)
+add model = 
+    let app = S.add @Order model 
     in start app
-    where
-        processApp :: App OrderModel
-        processApp = do
-            order <- getOrder cid
-            S.delete @Order @OrderModel (orderModelId order)
-            added <- S.add @Order order
-            let editOrder = order { orderModelId = added, orderModelNumber = "My test order"}
-            S.edit @Order editOrder
-            return editOrder
+
+edit :: OrderModel -> IO (AppResult ())
+edit model = 
+    let app = S.edit @Order model
+    in start app
+
+delete :: Int -> IO (AppResult OrderModel)
+delete eid = 
+    let app = S.delete @Order eid
+    in start app
+
+search :: OrderSearchModel -> IO (AppResult [OrderModel])
+search sch =
+    let app = S.search @Order sch
+    in start app
