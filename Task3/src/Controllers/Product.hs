@@ -6,8 +6,9 @@ import Data.Models (ProductModel)
 import Data.Entities (Product)
 import qualified Services.GenericService as S
 import Services.Products (getProduct)
-import Data.App (AppResult, start)
+import Data.App (start)
 import Data.SearchModels (ProductSearchModel)
+import Data.AppTypes (AppResult)
 
 getMany :: IO (AppResult [ProductModel])
 getMany = 

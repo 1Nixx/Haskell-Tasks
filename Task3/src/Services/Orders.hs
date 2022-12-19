@@ -5,7 +5,7 @@ import Data.Entities (Order(orderCustomerId, orderId), Customer, Product)
 import qualified Repositories.ProductRepository as ProdRep
 import qualified Services.GenericService as S
 import qualified Repositories.GenericRepository.GenericRepository as R
-import Data.App (App)
+import Data.AppTypes ( App ) 
 
 getOrder :: Int -> App OrderModel
 getOrder =

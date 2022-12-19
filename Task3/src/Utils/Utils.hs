@@ -1,8 +1,8 @@
 {-# LANGUAGE RankNTypes #-}
 module Utils.Utils (maybeHead, unwrap, validateArr, validateMaybe) where
 import Data.Maybe (fromMaybe)
-import Data.App
 import Control.Monad.Except
+import Data.AppTypes (App, AppError (ElementNotFound))
 
 maybeHead :: [a] -> Maybe a
 maybeHead [] = Nothing

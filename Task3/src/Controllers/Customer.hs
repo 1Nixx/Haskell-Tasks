@@ -6,8 +6,9 @@ import Data.Models (CustomerModel)
 import Data.Entities (Customer)
 import qualified Services.GenericService as S
 import Services.Customer (getCustomer)
-import Data.App (AppResult, start)
+import Data.App (start)
 import Data.SearchModels (CustomerSearchModel)
+import Data.AppTypes (AppResult)
 
 getMany :: IO (AppResult [CustomerModel])
 getMany = 

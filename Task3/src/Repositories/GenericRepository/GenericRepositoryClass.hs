@@ -7,14 +7,14 @@
 
 module Repositories.GenericRepository.GenericRepositoryClass (GenericRepository(..)) where
 
-import Utils.Files (readEntityFields, addLine, replaceLine, deleteLine)
+import Utils.Files
 import Data.List (findIndex)
 import Data.Converters.Converter
 import Data.RepositoryEntity.RepositoryEntity
 import Data.Functor ((<&>))
 import Data.SearchModels (SearchModel(..))
 import Repositories.FilterApplier (applyPagination)
-import Data.App (App, AppConfig (pageSize), AppState)
+import Data.AppTypes ( App, AppState (cache), AppConfig (pageSize) ) 
 import Control.Monad.Writer (MonadWriter(tell))
 import Control.Monad.Reader (MonadReader(ask))
 import qualified Control.Monad.State as S
@@ -27,18 +27,18 @@ class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a) => GenericRepositor
         let entName = entityString (entityName :: EntityName a)
         in tell [entName ++ " getList - starting"] >>
         S.get >>= \state ->
-        let cacheData = getCache state :: [a]
+        let cacheData = getCache (cache state) :: [a]
         in getData (not (null cacheData)) state cacheData entName >>= \result ->
         tell [entName ++ " getList - completed"] >>
         return result
         where
             getData :: Bool -> AppState -> [a] -> String -> App [a]
-            getData True _ cache _ = return cache
+            getData True _ state _ = return state
             getData False state _ entName =
-                (readEntityFields entName >>= \fields ->
+                (readAllEntities entName >>= \fields ->
                 mapM (return . readEntity) fields) >>= \arr ->
-                let newState = setCache state arr
-                in S.put newState >>
+                let newState = setCache (cache state) arr
+                in S.put state { cache = newState} >>
                 return arr
 
     get :: Int -> App a
@@ -56,7 +56,7 @@ class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a) => GenericRepositor
         in tell [entName ++ " add new - starting"] >>
         ((getList :: App [a]) <&> getUnicId) >>= \entId ->
         let newEntity = changeEntityId entity entId
-        in  addLine entName (writeEntity newEntity) >>
+        in  insertEntity entName (insertEntityStr newEntity) >>
         tell [entName ++ "add new id: " ++ show entId ++ " - completed"] >>
         clearCache @a >>
         return entId
@@ -68,7 +68,7 @@ class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a) => GenericRepositor
         in tell [entName ++ " edit id: " ++ show eid ++ " - starting"] >>
         (getList :: App [a]) <&> getListId eid >>= \maybeLineId ->
         validateMaybe eid entName maybeLineId >>= \lineId ->
-        replaceLine entName (writeEntity entity) lineId >>
+        updateEntity entName (updateEntityStr entity) lineId >>
         tell [entName ++ " edit id: " ++ show eid ++ " - completed"] >>
         clearCache @a
 
@@ -79,7 +79,7 @@ class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a) => GenericRepositor
         (getList :: App [a]) <&> getListId enId >>= \maybeLineId ->
         validateMaybe enId entName maybeLineId >>= \lineId ->
         get enId >>= \deletedEnt ->
-        deleteLine entName lineId >>
+        deleteEntity entName lineId >>
         tell [entName ++ " delete id: " ++ show enId ++ " - completed"] >>
         clearCache @a >>
         return deletedEnt

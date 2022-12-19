@@ -6,8 +6,9 @@ import Data.Models (OrderModel)
 import Data.Entities (Order)
 import qualified Services.GenericService as S
 import Services.Orders (getOrder)
-import Data.App (AppResult, start)
+import Data.App (start)
 import Data.SearchModels (OrderSearchModel)
+import Data.AppTypes (AppResult)
 
 getMany :: IO (AppResult [OrderModel])
 getMany = 

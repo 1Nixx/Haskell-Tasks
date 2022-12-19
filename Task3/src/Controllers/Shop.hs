@@ -6,9 +6,10 @@ module Controllers.Shop (getMany, getOne, add, edit, delete, search) where
 import Data.Models (ShopModel)
 import Data.Entities (Shop)
 import qualified Services.GenericService as S
-import Data.App (AppResult, start)
+import Data.App (start)
 import Services.Shops (getShop)
 import Data.SearchModels
+import Data.AppTypes (AppResult)
 
 getMany :: IO (AppResult [ShopModel])
 getMany = 

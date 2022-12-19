@@ -30,6 +30,7 @@ library
       Controllers.Product
       Controllers.Shop
       Data.App
+      Data.AppTypes
       Data.CommonEntity
       Data.Context
       Data.Converters.Converter
@@ -68,6 +69,7 @@ library
       Services.SearchService
       Services.Shops
       Utils.Cache
+      Utils.Database
       Utils.Files
       Utils.Utils
   other-modules:
@@ -77,7 +79,10 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , ms-tds
+    , mssql-simple
     , mtl
+    , network
     , text
   default-language: Haskell2010
 
@@ -91,7 +96,10 @@ executable Task3-exe
   build-depends:
       Task3
     , base >=4.7 && <5
+    , ms-tds
+    , mssql-simple
     , mtl
+    , network
     , text
   default-language: Haskell2010
 
@@ -106,6 +114,9 @@ test-suite Task3-test
   build-depends:
       Task3
     , base >=4.7 && <5
+    , ms-tds
+    , mssql-simple
     , mtl
+    , network
     , text
   default-language: Haskell2010

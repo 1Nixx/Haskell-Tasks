@@ -17,5 +17,7 @@ instance ReadWriteEntity Product where
         productPrice = read x4,
         productColor = read x5::Color
     }
-    writeEntity :: Product -> String
-    writeEntity pd = show (productId pd) ++ "|" ++ show (productShopId pd) ++ "|" ++ productName pd ++ "|" ++ show (productPrice pd) ++ "|" ++ show (productColor pd)
+    insertEntityStr :: Product -> String
+    insertEntityStr pd = "(" ++ show (productId pd) ++ "," ++ show (productShopId pd) ++ ",'" ++ productName pd ++ "'," ++ show (productPrice pd) ++ ",'" ++ show (productColor pd) ++ "')"
+    updateEntityStr :: Product -> String
+    updateEntityStr pd = "ProductShopId = " ++ show (productShopId pd) ++ ", ProductName = '" ++ productName pd ++ "', ProductPrice = " ++ show (productPrice pd) ++ ", ProductColor = '" ++ show (productColor pd) ++ "'"
