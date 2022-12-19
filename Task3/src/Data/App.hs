@@ -15,14 +15,14 @@ import Database.MSSQLServer.Connection (Connection(Connection))
 
 start :: App a -> IO (AppResult a)
 start app =
-    let config = AppConfig 5 "127.0.0.1" "1433" "HaskellDB" "LAPTOP-NIKITA\\hripa" "Nikita29082003" "src/Files/ "
+    let config = AppConfig 5 "127.0.0.1" "1433" "HaskellDB" "_" "_" "src/Files/"
         appstate = AppState (AppCache [] [] [] [] []) 
         fullApp = runStateT (runReaderT (runWriterT (runExceptT (runApp app))) config) 
-    in  connectToDatabase config >>= \conn -> 
-        fullApp (appstate conn) >>= \((resultWithErrors, logsApp), stateApp) -> 
-        return $ processResult resultWithErrors logsApp stateApp
-    -- in  fullApp (appstate (Connection {})) >>= \((resultWithErrors, logsApp), stateApp) -> 
-    --     return $ processResult resultWithErrors logsApp stateApp 
+    -- in  connectToDatabase config >>= \conn -> 
+    --     fullApp (appstate conn) >>= \((resultWithErrors, logsApp), stateApp) -> 
+    --     return $ processResult resultWithErrors logsApp stateApp
+    in  fullApp (appstate (Connection {})) >>= \((resultWithErrors, logsApp), stateApp) -> 
+        return $ processResult resultWithErrors logsApp stateApp 
     where
         processResult :: Either AppError a -> AppLog -> AppState -> AppResult a
         processResult (Left err) logsApp stateApp = AppResult logsApp (cache stateApp) (AppError (show err))

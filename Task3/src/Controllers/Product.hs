@@ -1,6 +1,7 @@
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE OverloadedStrings #-}
 
-module Controllers.Product (getMany, getOne, add, edit, delete, search) where
+module Controllers.Product (getMany, getOne, add, edit, delete, search, handleRequest) where
 
 import Data.Models (ProductModel)
 import Data.Entities (Product)
@@ -9,6 +10,16 @@ import Services.Products (getProduct)
 import Data.App (start)
 import Data.SearchModels (ProductSearchModel)
 import Data.AppTypes (AppResult)
+import Network.Wai (Request, Response, responseLBS)
+import Data.Text (Text)
+import Utils.Route (handleRoute)
+import Network.HTTP.Types (status200)
+
+handleRequest :: Request -> [Text] -> Response
+handleRequest reqest route = 
+    case handleRoute route of
+        "" -> responseLBS status200 [("Content-Type", "text/plain")] "Empty Product"
+        _ -> responseLBS status200 [("Content-Type", "text/plain")] "Not Found Product"     
 
 getMany :: IO (AppResult [ProductModel])
 getMany = 

@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Controllers.Customer
+      Controllers.Home
       Controllers.Order
       Controllers.Product
       Controllers.Shop
@@ -71,7 +72,9 @@ library
       Utils.Cache
       Utils.Database
       Utils.Files
+      Utils.Route
       Utils.Utils
+      View.Order
   other-modules:
       Paths_Task3
   hs-source-dirs:
@@ -79,11 +82,18 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , blaze-html
+    , blaze-markup
+    , bytestring
+    , case-insensitive
+    , http-types
     , ms-tds
     , mssql-simple
     , mtl
     , network
     , text
+    , wai
+    , warp
   default-language: Haskell2010
 
 executable Task3-exe
@@ -96,11 +106,18 @@ executable Task3-exe
   build-depends:
       Task3
     , base >=4.7 && <5
+    , blaze-html
+    , blaze-markup
+    , bytestring
+    , case-insensitive
+    , http-types
     , ms-tds
     , mssql-simple
     , mtl
     , network
     , text
+    , wai
+    , warp
   default-language: Haskell2010
 
 test-suite Task3-test
@@ -114,9 +131,16 @@ test-suite Task3-test
   build-depends:
       Task3
     , base >=4.7 && <5
+    , blaze-html
+    , blaze-markup
+    , bytestring
+    , case-insensitive
+    , http-types
     , ms-tds
     , mssql-simple
     , mtl
     , network
     , text
+    , wai
+    , warp
   default-language: Haskell2010

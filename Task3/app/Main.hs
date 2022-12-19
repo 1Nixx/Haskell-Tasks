@@ -1,16 +1,41 @@
+{-# LANGUAGE OverloadedStrings #-}
 module Main (main) where
 
 import qualified Controllers.Customer as CC
 import qualified Controllers.Order as CO
 import qualified Controllers.Product as CP
 import qualified Controllers.Shop as CS
+import qualified Controllers.Home as CH
 import Data.AppTypes (AppResult(result))
+
+import Network.Wai
+import Network.HTTP.Types
+import Network.Wai.Handler.Warp (run)
+import Control.Exception
+import qualified Data.ByteString.Lazy.Internal as LBS
+import qualified Data.ByteString.Internal as BS
+import Data.CaseInsensitive (mk)
+import Network.HTTP.Types (status404)
+import Utils.Route
+
 
 main :: IO ()
 main = do
-    putStrLn "\nCUSTOMERS\n"
-    customers <- CC.getMany  
-    print $ result customers
+    putStrLn "http://localhost:8080/"
+    run 8080 app
+
+app :: Application
+app request respond =  case handleRoute $ pathInfo request of
+    ""     -> respond $ CH.index
+    "Customer" ->respond $ CC.handleRequest request (nextRoute $ pathInfo request) 
+    "Order" ->  CO.handleRequest request (nextRoute $ pathInfo request) >>= \rer -> respond rer
+    "Product" ->respond $  CP.handleRequest request (nextRoute $ pathInfo request)
+    "Shop" ->respond $  CS.handleRequest request (nextRoute $ pathInfo request)
+    _       ->respond $ responseLBS status404 [("Content-Type", "text/plain")] (LBS.packChars (show (pathInfo request)))
+       
+    -- putStrLn "\nCUSTOMERS\n"
+    -- customers <- CC.getMany  
+    -- print $ result customers
 
     -- putStrLn "\nCUSTOMER #2\n"
     -- customer <- CC.getOne 2

@@ -1,6 +1,7 @@
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE OverloadedStrings #-}
 
-module Controllers.Customer (getMany, getOne, add, edit, delete, search) where
+module Controllers.Customer (getMany, getOne, add, edit, delete, search, handleRequest) where
 
 import Data.Models (CustomerModel)
 import Data.Entities (Customer)
@@ -9,6 +10,16 @@ import Services.Customer (getCustomer)
 import Data.App (start)
 import Data.SearchModels (CustomerSearchModel)
 import Data.AppTypes (AppResult)
+import Network.Wai (Request, Response, responseLBS)
+import Data.Text (Text)
+import Utils.Route (handleRoute)
+import Network.HTTP.Types (status200)
+
+handleRequest :: Request -> [Text] -> Response
+handleRequest reqest route = 
+    case handleRoute route of
+        "" -> responseLBS status200 [("Content-Type", "text/plain")] "Empty Customer"
+        _ -> responseLBS status200 [("Content-Type", "text/plain")] "Not Found Customer"           
 
 getMany :: IO (AppResult [CustomerModel])
 getMany = 

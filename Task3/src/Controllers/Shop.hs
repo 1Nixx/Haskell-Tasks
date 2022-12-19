@@ -1,7 +1,8 @@
 {-# LANGUAGE TypeApplications #-}
 {-# OPTIONS_GHC -Wno-unused-do-bind #-}
+{-# LANGUAGE OverloadedStrings #-}
 
-module Controllers.Shop (getMany, getOne, add, edit, delete, search) where
+module Controllers.Shop (getMany, getOne, add, edit, delete, search, handleRequest) where
 
 import Data.Models (ShopModel)
 import Data.Entities (Shop)
@@ -10,6 +11,16 @@ import Data.App (start)
 import Services.Shops (getShop)
 import Data.SearchModels
 import Data.AppTypes (AppResult)
+import Network.Wai (Request, Response, responseLBS)
+import Data.Text (Text)
+import Utils.Route (handleRoute)
+import Network.HTTP.Types (status200)
+
+handleRequest :: Request -> [Text] -> Response
+handleRequest reqest route = 
+    case handleRoute route of
+        "" -> responseLBS status200 [("Content-Type", "text/plain")] "Empty"
+        _ -> responseLBS status200 [("Content-Type", "text/plain")] "Not Found Customer"     
 
 getMany :: IO (AppResult [ShopModel])
 getMany = 

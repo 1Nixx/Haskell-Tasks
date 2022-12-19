@@ -26,6 +26,13 @@ dependencies:
 - mssql-simple
 - network
 - ms-tds
+- blaze-html
+- wai
+- warp
+- http-types
+- bytestring
+- case-insensitive
+- blaze-markup
 
 ghc-options:
 - -Wall
