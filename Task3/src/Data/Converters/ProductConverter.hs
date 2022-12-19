@@ -18,6 +18,8 @@ instance ReadWriteEntity Product where
         productColor = read x5::Color
     }
     insertEntityStr :: Product -> String
-    insertEntityStr pd = "(" ++ show (productId pd) ++ "," ++ show (productShopId pd) ++ ",'" ++ productName pd ++ "'," ++ show (productPrice pd) ++ ",'" ++ show (productColor pd) ++ "')"
+    insertEntityStr pd = show (productId pd) ++ "|" ++ show (productShopId pd) ++ "|" ++ productName pd ++ "|" ++ show (productPrice pd) ++ "|" ++ show (productColor pd)
+        --"(" ++ show (productId pd) ++ "," ++ show (productShopId pd) ++ ",'" ++ productName pd ++ "'," ++ show (productPrice pd) ++ ",'" ++ show (productColor pd) ++ "')"
     updateEntityStr :: Product -> String
-    updateEntityStr pd = "ProductShopId = " ++ show (productShopId pd) ++ ", ProductName = '" ++ productName pd ++ "', ProductPrice = " ++ show (productPrice pd) ++ ", ProductColor = '" ++ show (productColor pd) ++ "'"
+    updateEntityStr pd = insertEntityStr pd
+        --"ProductShopId = " ++ show (productShopId pd) ++ ", ProductName = '" ++ productName pd ++ "', ProductPrice = " ++ show (productPrice pd) ++ ", ProductColor = '" ++ show (productColor pd) ++ "'"

@@ -14,6 +14,8 @@ instance ReadWriteEntity Order where
             orderNumber = x3
         }
     insertEntityStr :: Order -> String
-    insertEntityStr ord = "(" ++ show (orderId ord) ++ "," ++ show (orderCustomerId ord) ++ ",'" ++ orderNumber ord ++ "')"
+    insertEntityStr ord = show (orderId ord) ++ "|" ++ show (orderCustomerId ord) ++ "|" ++ orderNumber ord
+        --"(" ++ show (orderId ord) ++ "," ++ show (orderCustomerId ord) ++ ",'" ++ orderNumber ord ++ "')"
     updateEntityStr :: Order -> String
-    updateEntityStr ord = "OrderCustomerId = " ++ show (orderCustomerId ord) ++ ", OrderNumber = '" ++  orderNumber ord ++ "'"
+    updateEntityStr ord = insertEntityStr ord
+        --"OrderCustomerId = " ++ show (orderCustomerId ord) ++ ", OrderNumber = '" ++  orderNumber ord ++ "'"

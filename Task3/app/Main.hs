@@ -26,12 +26,12 @@ main = do
 
 app :: Application
 app request respond =  case handleRoute $ pathInfo request of
-    ""     -> respond $ CH.index
-    "Customer" ->respond $ CC.handleRequest request (nextRoute $ pathInfo request) 
+    ""     -> CH.index >>= \rer -> respond rer
+    "Customer" -> respond $ CC.handleRequest request (nextRoute $ pathInfo request) 
     "Order" ->  CO.handleRequest request (nextRoute $ pathInfo request) >>= \rer -> respond rer
-    "Product" ->respond $  CP.handleRequest request (nextRoute $ pathInfo request)
-    "Shop" ->respond $  CS.handleRequest request (nextRoute $ pathInfo request)
-    _       ->respond $ responseLBS status404 [("Content-Type", "text/plain")] (LBS.packChars (show (pathInfo request)))
+    "Product" -> CP.handleRequest request (nextRoute $ pathInfo request) >>= \rer -> respond rer
+    "Shop" -> respond $  CS.handleRequest request (nextRoute $ pathInfo request)
+    _       -> respond $ responseLBS status404 [("Content-Type", "text/plain")] (LBS.packChars (show (pathInfo request)))
        
     -- putStrLn "\nCUSTOMERS\n"
     -- customers <- CC.getMany  
