@@ -21,7 +21,7 @@ CREATE TABLE Products
 	Id INT PRIMARY KEY IDENTITY,
 	ProductShopId INT NOT NULL,
 	ProductName NVARCHAR(50) NOT NULL,
-	ProductPrice DECIMAL NOT NULL,
+	ProductPrice FLOAT NOT NULL,
 	ProductColor NVARCHAR(50) NOT NULL,
 	FOREIGN KEY (ProductShopId) REFERENCES Shops (Id)
 ); 

@@ -15,8 +15,6 @@ instance ReadWriteEntity Shop where
             shopAddress = x3
         }
     insertEntityStr :: Shop -> String
-    insertEntityStr shop = show(shopId shop) ++ "|" ++ shopName shop ++ "|" ++ shopAddress shop
-        --"(" ++ show(shopId shop) ++ ",'" ++ shopName shop ++ "','" ++ shopAddress shop ++ "')"
+    insertEntityStr shop = "('" ++ shopName shop ++ "','" ++ shopAddress shop ++ "')"
     updateEntityStr :: Shop -> String
-    updateEntityStr shop = insertEntityStr shop
-        --"ShopName = '" ++ shopName shop ++ "', ShopAddress = '" ++ shopAddress shop ++ "'"
+    updateEntityStr shop = "ShopName = '" ++ shopName shop ++ "', ShopAddress = '" ++ shopAddress shop ++ "'"

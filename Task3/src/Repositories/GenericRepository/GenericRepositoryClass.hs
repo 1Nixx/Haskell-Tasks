@@ -7,7 +7,7 @@
 
 module Repositories.GenericRepository.GenericRepositoryClass (GenericRepository(..)) where
 
-import Utils.Files
+import Utils.Database
 import Data.List (findIndex)
 import Data.Converters.Converter
 import Data.RepositoryEntity.RepositoryEntity
@@ -20,8 +20,10 @@ import Control.Monad.Reader (MonadReader(ask))
 import qualified Control.Monad.State as S
 import Utils.Cache
 import Utils.Utils (validateArr, validateMaybe)
+import Database.MSSQLServer.Query (Row)
+import Data.DatabaseRow 
 
-class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a) => GenericRepository a where
+class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a, Row a) => GenericRepository a where
     getList :: App [a]
     getList =
         let entName = entityString (entityName :: EntityName a)
@@ -35,8 +37,7 @@ class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a) => GenericRepositor
             getData :: Bool -> AppState -> [a] -> String -> App [a]
             getData True _ state _ = return state
             getData False state _ entName =
-                (readAllEntities entName >>= \fields ->
-                mapM (return . readEntity) fields) >>= \arr ->
+                readAllEntities @a entName >>= \arr ->
                 let newState = setCache (cache state) arr
                 in S.put state { cache = newState} >>
                 return arr

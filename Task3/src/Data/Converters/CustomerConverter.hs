@@ -14,8 +14,6 @@ instance ReadWriteEntity Customer where
             customerAddress = x3
         }
     insertEntityStr :: Customer -> String
-    insertEntityStr cs = show (customerId cs) ++ "|" ++ customerName cs ++ "|" ++ customerAddress cs
-        --"(" ++ show (customerId cs) ++ ",'" ++ customerName cs ++ "','" ++ customerAddress cs ++ "')"
+    insertEntityStr cs = "('" ++ customerName cs ++ "','" ++ customerAddress cs ++ "')"
     updateEntityStr :: Customer -> String
-    updateEntityStr cs = insertEntityStr cs
-        --"CustomerName = '" ++ customerName cs ++ "', CustomerAddress = '" ++ customerAddress cs ++ "'"
+    updateEntityStr cs = "CustomerName = '" ++ customerName cs ++ "', CustomerAddress = '" ++ customerAddress cs ++ "'"

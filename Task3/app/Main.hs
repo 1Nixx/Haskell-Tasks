@@ -1,12 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main (main) where
 
-import qualified Controllers.Customer as CC
 import qualified Controllers.Order as CO
 import qualified Controllers.Product as CP
-import qualified Controllers.Shop as CS
 import qualified Controllers.Home as CH
-import Data.AppTypes (AppResult(result))
 
 import Network.Wai
 import Network.HTTP.Types
