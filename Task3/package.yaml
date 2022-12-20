@@ -33,6 +33,8 @@ dependencies:
 - bytestring
 - case-insensitive
 - blaze-markup
+- split
+- bytestring-conversion
 
 ghc-options:
 - -Wall

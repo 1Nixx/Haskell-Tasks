@@ -5,22 +5,21 @@
 
 module Controllers.Order (getMany, getOne, search, handleRequest) where
 
-import Data.Models (OrderModel (OrderModel))
+import Data.Models (OrderModel)
 import Data.Entities (Order)
 import qualified Services.GenericService as S
 import Services.Orders (getOrder)
 import Data.App (start)
 import Data.SearchModels (OrderSearchModel)
 import Data.AppTypes (AppResult (..), AppData (..))
-import Network.Wai (Request (requestMethod), Response, responseLBS)
-import Data.Text (Text)
+import Network.Wai (Request, Response, responseLBS)
 import Utils.Route (handleRoute)
 import Network.HTTP.Types (status200)
 import Text.Blaze.Html5 ( Html )
 import Text.Blaze.Html.Renderer.Utf8 ( renderHtml )
 import View.Order.Order ( getPage, getOrderPage )
 import Data.Char (isDigit)
-import Data.Text (unpack)
+import Data.Text (unpack, Text)
 
 handleRequest :: Request -> [Text] -> IO Response
 handleRequest reqest route = do
