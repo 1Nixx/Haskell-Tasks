@@ -11,11 +11,7 @@ import Data.AppTypes (AppResult(result))
 import Network.Wai
 import Network.HTTP.Types
 import Network.Wai.Handler.Warp (run)
-import Control.Exception
 import qualified Data.ByteString.Lazy.Internal as LBS
-import qualified Data.ByteString.Internal as BS
-import Data.CaseInsensitive (mk)
-import Network.HTTP.Types (status404)
 import Utils.Route
 
 
@@ -25,14 +21,12 @@ main = do
     run 8080 app
 
 app :: Application
-app request respond =  case handleRoute $ pathInfo request of
-    ""     -> CH.index >>= \rer -> respond rer
-    "Customer" -> respond $ CC.handleRequest request (nextRoute $ pathInfo request) 
-    "Order" ->  CO.handleRequest request (nextRoute $ pathInfo request) >>= \rer -> respond rer
-    "Product" -> CP.handleRequest request (nextRoute $ pathInfo request) >>= \rer -> respond rer
-    "Shop" -> respond $  CS.handleRequest request (nextRoute $ pathInfo request)
-    _       -> respond $ responseLBS status404 [("Content-Type", "text/plain")] (LBS.packChars (show (pathInfo request)))
-       
+app request respond =  (case handleRoute $ pathInfo request of
+    ""     -> CH.index
+    "Order" ->  CO.handleRequest request (nextRoute $ pathInfo request)
+    "Product" -> CP.handleRequest request (nextRoute $ pathInfo request)
+    _       -> return (responseLBS status404 [("Content-Type", "text/plain")] (LBS.packChars (show (pathInfo request))))) 
+    >>= \rer -> respond rer
     -- putStrLn "\nCUSTOMERS\n"
     -- customers <- CC.getMany  
     -- print $ result customers

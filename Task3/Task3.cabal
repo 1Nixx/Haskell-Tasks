@@ -25,11 +25,9 @@ source-repository head
 
 library
   exposed-modules:
-      Controllers.Customer
       Controllers.Home
       Controllers.Order
       Controllers.Product
-      Controllers.Shop
       Data.App
       Data.AppTypes
       Data.CommonEntity
