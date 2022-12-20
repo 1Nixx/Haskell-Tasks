@@ -56,8 +56,7 @@ class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a, Row a) => GenericRe
         let entName = entityString (entityName :: EntityName a)
         in tell [entName ++ " add new - starting"] >>
         ((getList :: App [a]) <&> getUnicId) >>= \entId ->
-        let newEntity = changeEntityId entity entId
-        in  insertEntity entName (insertEntityStr newEntity) >>
+        insertEntity entName (insertEntityStr entity) >>
         tell [entName ++ "add new id: " ++ show entId ++ " - completed"] >>
         clearCache @a >>
         return entId
@@ -67,9 +66,7 @@ class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a, Row a) => GenericRe
         let entName = entityString (entityName :: EntityName a)
             eid = entityId entity
         in tell [entName ++ " edit id: " ++ show eid ++ " - starting"] >>
-        (getList :: App [a]) <&> getListId eid >>= \maybeLineId ->
-        validateMaybe eid entName maybeLineId >>= \lineId ->
-        updateEntity entName (updateEntityStr entity) lineId >>
+        updateEntity entName (updateEntityStr entity) eid >>
         tell [entName ++ " edit id: " ++ show eid ++ " - completed"] >>
         clearCache @a
 
@@ -77,10 +74,8 @@ class (ReadWriteEntity a, RepositoryEntity a, CacheAccess a, Row a) => GenericRe
     delete enId =
         let entName = entityString (entityName :: EntityName a)
         in tell [entName ++ " delete id: " ++ show enId ++" - starting"] >>
-        (getList :: App [a]) <&> getListId enId >>= \maybeLineId ->
-        validateMaybe enId entName maybeLineId >>= \lineId ->
         get enId >>= \deletedEnt ->
-        deleteEntity entName lineId >>
+        deleteEntity entName enId >>
         tell [entName ++ " delete id: " ++ show enId ++ " - completed"] >>
         clearCache @a >>
         return deletedEnt

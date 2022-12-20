@@ -9,6 +9,7 @@ import Data.Models (ProductModel(..), ShopModel (..))
 import Control.Monad (forM_)
 import Text.Blaze.Html5.Attributes (href)
 import Data.Maybe (fromJust, isJust, fromMaybe)
+import Text.Blaze.Html4.Transitional.Attributes (border)
 
 getPage :: [ProductModel] -> Html
 getPage products = 
@@ -17,7 +18,8 @@ getPage products =
             H.title "Products"
         body $ do 
             p "Products"
-            table $ do 
+            a ! href "/" $ "To start page"
+            table ! border "1" $ do 
                 tr $ do
                     th "Product Id"
                     th "Product Name"

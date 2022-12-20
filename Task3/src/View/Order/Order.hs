@@ -9,6 +9,7 @@ import Text.Blaze.Html5 as H
     ( toHtml, a, body, docTypeHtml, head, p, table, td, th, title, tr, stringValue, Html, (!), span, br )
 import Text.Blaze.Html5.Attributes
 import Data.Maybe (fromJust)
+import Text.Blaze.Html4.Transitional.Attributes (border)
 
 getPage :: [OrderModel] -> Html
 getPage orders =
@@ -17,7 +18,8 @@ getPage orders =
             H.title "Orders"
         body $ do
             p "Orders"
-            table $ do
+            a ! href "/" $ "To start page"
+            table ! border "1" $ do
                 tr $ do
                     th "Order Id"
                     th "Order Number"
