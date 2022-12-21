@@ -8,7 +8,7 @@ import Mappings.Mappings (Mapping(..))
 import Mappings.MappingParams (MappingParams(..))
 import Services.SearchService (SearchService(..))
 import Data.Entities (Customer, Order, Product, Shop)
-import Data.App (App)
+import Data.AppTypes ( App ) 
 
 class  (GenericRepository a) => GenericService a where
     getList :: (Mapping b a) => App [b]

@@ -14,5 +14,7 @@ instance ReadWriteEntity ProductOrder where
             orderFKId = read x2,
             prodFKId = read x3
         }
-    writeEntity :: ProductOrder -> String
-    writeEntity po = show(productOrderId po) ++ "|" ++ show(orderFKId po) ++ "|" ++ show(prodFKId po)
+    insertEntityStr :: ProductOrder -> String
+    insertEntityStr po = "(" ++ show(orderFKId po) ++ "," ++ show(orderFKId po) ++")"
+    updateEntityStr :: ProductOrder -> String
+    updateEntityStr po = "OrderFKId = " ++ show(orderFKId po) ++ ", ProdFKId = " ++ show(orderFKId po)

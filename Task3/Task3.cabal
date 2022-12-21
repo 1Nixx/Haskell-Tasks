@@ -25,11 +25,11 @@ source-repository head
 
 library
   exposed-modules:
-      Controllers.Customer
+      Controllers.Home
       Controllers.Order
       Controllers.Product
-      Controllers.Shop
       Data.App
+      Data.AppTypes
       Data.CommonEntity
       Data.Context
       Data.Converters.Converter
@@ -39,6 +39,7 @@ library
       Data.Converters.ProductConverter
       Data.Converters.ProductOrderConverter
       Data.Converters.ShopConverter
+      Data.DatabaseRow
       Data.Entities
       Data.Models
       Data.RepositoryEntity.RepositoryCustomer
@@ -68,8 +69,14 @@ library
       Services.SearchService
       Services.Shops
       Utils.Cache
+      Utils.Database
       Utils.Files
+      Utils.Route
       Utils.Utils
+      View.Order.Order
+      View.Product.Add
+      View.Product.Edit
+      View.Product.Product
   other-modules:
       Paths_Task3
   hs-source-dirs:
@@ -77,8 +84,20 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , blaze-html
+    , blaze-markup
+    , bytestring
+    , bytestring-conversion
+    , case-insensitive
+    , http-types
+    , ms-tds
+    , mssql-simple
     , mtl
+    , network
+    , split
     , text
+    , wai
+    , warp
   default-language: Haskell2010
 
 executable Task3-exe
@@ -91,8 +110,20 @@ executable Task3-exe
   build-depends:
       Task3
     , base >=4.7 && <5
+    , blaze-html
+    , blaze-markup
+    , bytestring
+    , bytestring-conversion
+    , case-insensitive
+    , http-types
+    , ms-tds
+    , mssql-simple
     , mtl
+    , network
+    , split
     , text
+    , wai
+    , warp
   default-language: Haskell2010
 
 test-suite Task3-test
@@ -106,6 +137,18 @@ test-suite Task3-test
   build-depends:
       Task3
     , base >=4.7 && <5
+    , blaze-html
+    , blaze-markup
+    , bytestring
+    , bytestring-conversion
+    , case-insensitive
+    , http-types
+    , ms-tds
+    , mssql-simple
     , mtl
+    , network
+    , split
     , text
+    , wai
+    , warp
   default-language: Haskell2010

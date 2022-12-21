@@ -7,7 +7,7 @@ module Repositories.ProductRepository
 
 import Data.Entities (Product(..), productShopId, ProductOrder (..), Order(..))
 import Repositories.GenericRepository.GenericRepository
-import Data.App (App)
+import Data.AppTypes ( App ) 
 
 getProductsByOrderId :: Int -> App [Product]
 getProductsByOrderId searchOrderId =

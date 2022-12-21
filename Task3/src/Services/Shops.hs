@@ -4,7 +4,7 @@ import Data.Models (ShopModel)
 import Data.Entities (Shop (shopId), Product)
 import qualified Services.GenericService as S
 import qualified Repositories.ProductRepository as ProdRep
-import Data.App (App)
+import Data.AppTypes ( App ) 
 
 getShop :: Int -> App ShopModel
 getShop =

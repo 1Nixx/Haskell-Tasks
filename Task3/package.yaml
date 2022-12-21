@@ -23,6 +23,18 @@ dependencies:
 - base >= 4.7 && < 5
 - text
 - mtl
+- mssql-simple
+- network
+- ms-tds
+- blaze-html
+- wai
+- warp
+- http-types
+- bytestring
+- case-insensitive
+- blaze-markup
+- split
+- bytestring-conversion
 
 ghc-options:
 - -Wall

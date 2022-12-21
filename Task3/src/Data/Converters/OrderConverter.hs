@@ -13,6 +13,7 @@ instance ReadWriteEntity Order where
             orderCustomerId = read x2,
             orderNumber = x3
         }
-    writeEntity :: Order -> String
-    writeEntity ord = show (orderId ord) ++ "|" ++ show (orderCustomerId ord) ++ "|" ++ orderNumber ord
-    
+    insertEntityStr :: Order -> String
+    insertEntityStr ord = "(" ++ show (orderCustomerId ord) ++ ",'" ++ orderNumber ord ++ "')"
+    updateEntityStr :: Order -> String
+    updateEntityStr ord = "OrderCustomerId = " ++ show (orderCustomerId ord) ++ ", OrderNumber = '" ++  orderNumber ord ++ "'"

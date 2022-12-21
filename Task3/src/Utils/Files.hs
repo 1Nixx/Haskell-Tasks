@@ -1,11 +1,11 @@
-module Utils.Files (readEntityFields, deleteLine, addLine, replaceLine) where
+module Utils.Files (readAllEntities, deleteEntity, insertEntity, updateEntity) where
 
 import System.IO
     ( hClose, hGetContents, openFile, IOMode(ReadMode) )
 import qualified Data.Text as Text
-import Data.App (App (..), AppConfig (filePath))
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Reader (MonadReader(ask))
+import Data.AppTypes (App, filePath)
 
 readEntityFromFile :: String -> App String
 readEntityFromFile entityName =
@@ -21,27 +21,27 @@ writeEntityToFile entityName text =
     ask >>= \config ->
     liftIO $ writeFile (fileName (filePath config) entityName) text
 
-readEntityFields :: String -> App [[String]]
-readEntityFields entityName =
+readAllEntities :: String -> App [[String]]
+readAllEntities entityName =
     readEntityFromFile entityName >>=
     mapM (return . map Text.unpack . Text.split (=='|') . Text.pack ) . lines
 
-deleteLine :: String -> Int -> App ()
-deleteLine entityName lineInd =
+deleteEntity :: String -> Int -> App ()
+deleteEntity entityName lineInd =
     readEntityFromFile entityName >>= \text -> 
         let rows = lines text
             resultRows = unlines $ removeAt lineInd rows
         in writeEntityToFile entityName resultRows
 
-addLine :: String -> String -> App ()
-addLine entityName line =
+insertEntity :: String -> String -> App ()
+insertEntity entityName line =
     readEntityFromFile entityName >>= \text -> 
         let rows = lines text
             resultRows = unlines (rows ++ [line])
         in writeEntityToFile entityName resultRows
 
-replaceLine :: String -> String -> Int -> App ()
-replaceLine entityName line lineInd =
+updateEntity :: String -> String -> Int -> App ()
+updateEntity entityName line lineInd =
     readEntityFromFile entityName >>= \text -> 
         let rows = lines text
             resultRows = unlines $ replaceAt lineInd line rows

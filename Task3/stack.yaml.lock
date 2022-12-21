@@ -3,7 +3,21 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: mssql-simple-0.6.0.3@sha256:4a8d11d54c49ffa6bcc105bde25e389f9c6ab6876716d9d2b489527cc3459b53,2043
+    pantry-tree:
+      sha256: e761d7a3a9dddddef6671f8993750ab44b98741eab128119fcaefd4f8b141f56
+      size: 1054
+  original:
+    hackage: mssql-simple-0.6.0.3
+- completed:
+    hackage: ms-tds-0.4.0.2@sha256:36e797163d40c513a1037c0468bf2a2113d3666ce9cb408c0ba4cad34fa959d4,2231
+    pantry-tree:
+      sha256: 1828a83cb040485fb6b167ac02ee5b223ceb3d5a88c7420aefb502e5e8c286fb
+      size: 1369
+  original:
+    hackage: ms-tds-0.4.0.2
 snapshots:
 - completed:
     sha256: 6d1532d40621957a25bad5195bfca7938e8a06d923c91bc52aa0f3c41181f2d4
